@@ -1,4 +1,4 @@
-# Digital tool updater
+# AzDev CLI
 
 ## I.Introduction
 
@@ -50,8 +50,12 @@ Choose default settings with the Python language.
 python3 -m pip install --editable .
 ```
 
-Run the cli:
+## V - Run the CLI
 
 ```
-adru-cli run --configuration-file config.yml -v
+azdev repo-updater run --configuration-file <path-to>/config.yml -o <output-path>
+```
+
+```
+azdev release-manager changelog -p <your-project-path> -o <output-path>
 ```
