@@ -1,0 +1,64 @@
+name: azure_devops_cli
+
+trigger:
+- develop
+- main
+- features/*
+- hotfixes/*
+- bugfixes/*
+- releases/*
+- support/*
+
+pool:
+  vmImage: 'Ubuntu-20.04'
+
+variables:
+  - group: common.shares
+
+resources:
+  repositories:
+    - repository: templates
+      type: git
+      name: digital_infra_common_templates
+      ref: refs/tags/latest
+
+steps:
+  
+  - checkout: self      
+
+  - template: pipeline/tasks/tasks-init-git-version.yaml@templates
+  
+  - task: UsePythonVersion@0
+    displayName: 'Use python 3.11'
+    inputs:
+      versionSpec: '3.11'
+      addToPath: true
+      architecture: 'x64'
+  
+  - task: Bash@3
+    displayName: 'Install application dependencies'
+    inputs:
+      targetType: 'inline'
+      workingDirectory: $(Build.SourcesDirectory)/src
+      script: |
+        set -x
+        python3 -m pip install --upgrade pip
+        python3 -m venv .venv
+        source .venv/bin/activate
+        pip install --target="./.python_packages/lib/site-packages" -r requirements.txt
+  
+  - task: Bash@3
+    displayName: 'Build and package the CLI'
+    inputs:
+      targetType: 'inline'
+      workingDirectory: $(Build.SourcesDirectory)/src
+      script: |
+        pip install build
+        python -m build
+
+  - task: PublishBuildArtifacts@1
+    displayName: 'Publish artifact'
+    inputs:
+      PathtoPublish: $(Build.SourcesDirectory)/src/dist
+      ArtifactName: drop
+      publishLocation: Container

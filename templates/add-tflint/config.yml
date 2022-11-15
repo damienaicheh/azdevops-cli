@@ -1,0 +1,17 @@
+project:
+  name: My Project
+pull_request:
+  name: 'feat: Add tflint and fix corresponding issues and warnings'
+  branch: 'features/add_tflint'
+repository:
+  default_branch: develop
+  pattern: ^aa_infra_bb$
+  ignore_case: true # default to false
+assets_directory: 'templates/add-tflint' # repertoire d'execution courant si / non relatif ou ./
+actions:
+  - name: add
+    files: 
+      - name: .tflint.hcl
+      - name: templates.tf
+        path: 'infrastructure-live'
+        override: false
