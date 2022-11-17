@@ -50,3 +50,17 @@ steps:
       PathtoPublish: $(Build.SourcesDirectory)/src/dist
       ArtifactName: drop
       publishLocation: Container
+
+  - task: TwineAuthenticate@1
+    #condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+    inputs:
+      pythonUploadServiceConnection: 'AzDevOpsCliServiceConnection'
+      
+  - task: Bash@3
+    displayName: 'Upload to Pypi'
+    #condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+    inputs:
+      targetType: 'inline'
+      workingDirectory: $(Build.SourcesDirectory)/src
+      script: |
+        python3 -m twine upload --skip-existing --verbose --repository azdevops-cli  dist/*.whl
