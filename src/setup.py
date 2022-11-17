@@ -6,7 +6,7 @@ from setuptools import setup, find_packages
 version_infos = VersionInfos()
 
 setup (
-    name = 'azdev-cli',
+    name = 'azdevops-cli',
     include_package_data = True,
     version = version_infos.version,
     description= version_infos.description,
@@ -30,6 +30,6 @@ setup (
     ],
     packages = find_packages(exclude=["tests/*"]),
     scripts = [
-        'bin/azdev'
+        'bin/azdevops'
     ]
 )
