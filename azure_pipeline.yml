@@ -71,4 +71,4 @@ steps:
       targetType: 'inline'
       workingDirectory: $(Build.SourcesDirectory)/src
       script: |
-        python3 -m twine upload --skip-existing --verbose --repository azdevops-cli  dist/*.whl
+        python3 -m twine upload --skip-existing --verbose --repository azdevops-cli --config-file $(PYPIRC_PATH) dist/*.whl
