@@ -51,6 +51,14 @@ steps:
       ArtifactName: drop
       publishLocation: Container
 
+  - task: Bash@3
+    displayName: 'Build and package the CLI'
+    #condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+    inputs:
+      targetType: 'inline'
+      script: |
+        pip install twine
+
   - task: TwineAuthenticate@1
     #condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
     inputs:
