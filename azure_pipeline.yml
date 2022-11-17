@@ -53,20 +53,20 @@ steps:
 
   - task: Bash@3
     displayName: 'Build and package the CLI'
-    #condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
     inputs:
       targetType: 'inline'
       script: |
         pip install twine
 
   - task: TwineAuthenticate@1
-    #condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
     inputs:
       pythonUploadServiceConnection: 'AzDevOpsCliServiceConnection'
       
   - task: Bash@3
     displayName: 'Upload to Pypi'
-    #condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
     inputs:
       targetType: 'inline'
       workingDirectory: $(Build.SourcesDirectory)/src
