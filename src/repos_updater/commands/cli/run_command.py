@@ -24,8 +24,8 @@ class RunCommand(CliCommand):
         configuration_file = obj['configuration_file']
         output = obj['output']
         dry_run = obj['dry_run']
-        organization_url = obj['organization_url'] if obj['organization_url'] != None else get_env('AZDEV_ORGANIZATION_URL')
-        pat_token = obj['pat_token'] if obj['pat_token'] != None else get_env('AZDEV_PAT_TOKEN')
+        organization_url = obj['organization_url'] if obj['organization_url'] != None else get_env('AZDEVOPS_ORGANIZATION_URL')
+        pat_token = obj['pat_token'] if obj['pat_token'] != None else get_env('AZDEVOPS_PAT_TOKEN')
 
         azure_devops_creds = AzureDevOpsCredentials(organization_url, pat_token)
         

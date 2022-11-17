@@ -1,4 +1,4 @@
-name: azure_devops_cli
+name: azdevops_cli
 
 trigger:
 - develop
@@ -12,21 +12,9 @@ trigger:
 pool:
   vmImage: 'Ubuntu-20.04'
 
-variables:
-  - group: common.shares
-
-resources:
-  repositories:
-    - repository: templates
-      type: git
-      name: digital_infra_common_templates
-      ref: refs/tags/latest
-
 steps:
   
-  - checkout: self      
-
-  - template: pipeline/tasks/tasks-init-git-version.yaml@templates
+  - checkout: self
   
   - task: UsePythonVersion@0
     displayName: 'Use python 3.11'
@@ -62,3 +50,25 @@ steps:
       PathtoPublish: $(Build.SourcesDirectory)/src/dist
       ArtifactName: drop
       publishLocation: Container
+
+  - task: Bash@3
+    displayName: 'Build and package the CLI'
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+    inputs:
+      targetType: 'inline'
+      script: |
+        pip install twine
+
+  - task: TwineAuthenticate@1
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+    inputs:
+      pythonUploadServiceConnection: 'AzDevOpsCliServiceConnection'
+      
+  - task: Bash@3
+    displayName: 'Upload to Pypi'
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+    inputs:
+      targetType: 'inline'
+      workingDirectory: $(Build.SourcesDirectory)/src
+      script: |
+        python3 -m twine upload --skip-existing --verbose --repository azdevops-cli --config-file $(PYPIRC_PATH) dist/*.whl

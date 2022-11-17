@@ -1,0 +1,19 @@
+[project]
+name = "azdevops_cli"
+version = "0.0.1"
+authors = [
+  { name="Gwendall Garnier" },
+  { name="Damien Aicheh" },
+]
+description = "An Azure DevOps cli tool"
+readme = "README.md"
+requires-python = ">=3.11"
+classifiers = [
+    "Programming Language :: Python :: 3.11",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/damienaicheh/azdev-cli"
+"Bug Tracker" = "https://github.com/damienaicheh/azdev-cli/issues"

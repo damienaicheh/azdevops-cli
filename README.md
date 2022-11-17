@@ -53,9 +53,9 @@ python3 -m pip install --editable .
 ## V - Run the CLI
 
 ```
-azdev repo-updater run --configuration-file <path-to>/config.yml -o <output-path>
+azdevops repo-updater run --configuration-file <path-to>/config.yml -o <output-path>
 ```
 
 ```
-azdev release-manager changelog -p <your-project-path> -o <output-path>
+azdevops release-manager changelog -p <your-project-path> -o <output-path>
 ```
