@@ -1,6 +1,6 @@
 # AzDev CLI
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://github.com/gwendallg/rsql4net/blob/develop/LICENSE) [![Nuget](https://img.shields.io/nuget/v/rsql4net)]()
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://github.com/gwendallg/rsql4net/blob/develop/LICENSE) [![Pypi](https://img.shields.io/pypi/v/PACKAGE?label=azdevops-cli)]()
 
 ## I.Continuous integration
 
