@@ -34,6 +34,7 @@ steps:
         source .venv/bin/activate
         python3 -m pip install --upgrade pip
         pip install --target="./.python_packages/lib/site-packages" -r requirements.txt
+        pip install -r requirements.txt
 
   - task: Bash@3
     displayName: 'Unit tests'
@@ -43,7 +44,7 @@ steps:
       script: |
         set -x
         source .venv/bin/activate
-        python3 -m coverage run -m unittest discover
+        coverage run -m unittest discover
   
   - task: Bash@3
     displayName: 'Build and package the CLI'
