@@ -37,7 +37,7 @@ steps:
         pip install -r requirements.txt
 
   - task: Bash@3
-    displayName: 'Unit tests'
+    displayName: 'Unit tests and coverage'
     inputs:
       targetType: 'inline'
       workingDirectory: $(Build.SourcesDirectory)/src
@@ -45,6 +45,9 @@ steps:
         set -x
         source .venv/bin/activate
         coverage run -m unittest discover
+        if [ $? != 0 ] ; then
+          exit 1
+        fi
         coverage report
   
   - task: Bash@3

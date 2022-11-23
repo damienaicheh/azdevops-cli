@@ -6,7 +6,7 @@
 
 | Branch                      |  Build | Quality Gate |
 |-----------------------------|--------|--------------|
-| main                        |[![Build Status](https://dev.azure.com/damienaicheh0990/azdevops-cli/_apis/build/status/damienaicheh.azdevops-cli?branchName=main)](https://dev.azure.com/damienaicheh0990/azdevops-cli/_build/latest?definitionId=95&branchName=main)| [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=gwendallg_rsql4net&branch=master&metric=alert_status)](https://sonarcloud.io/dashboard?id=gwendallg_rsql4net&branch=master) |
+| main                        |[![Build Status](https://dev.azure.com/damienaicheh0990/azdevops-cli/_apis/build/status/damienaicheh.azdevops-cli?branchName=main)](https://dev.azure.com/damienaicheh0990/azdevops-cli/_build/latest?definitionId=95&branchName=main)| [![Quality Gate Status]([![Quality gate](https://sonarcloud.io/api/project_badges/quality_gate?project=damienaicheh_azdev-cli)](https://sonarcloud.io/summary/new_code?id=damienaicheh_azdev-cli) |
 | develop                     | [![Build Status](https://dev.azure.com/damienaicheh0990/azdevops-cli/_apis/build/status/damienaicheh.azdevops-cli?branchName=develop)](https://dev.azure.com/damienaicheh0990/azdevops-cli/_build/latest?definitionId=95&branchName=develop)| | 
 
 ## II.Introduction
