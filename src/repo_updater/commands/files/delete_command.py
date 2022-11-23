@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 
 import os
-from repos_updater.commands.files.file_command import FileCommand
-from repos_updater.commands.files.file_command_args import FileCommandArgs
+from repo_updater.commands.files.file_command import FileCommand
+from repo_updater.commands.files.file_command_args import FileCommandArgs
 
 class DeleteFileCommand(FileCommand):
 

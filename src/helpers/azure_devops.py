@@ -41,7 +41,7 @@ def get_repositories_to_process(azure_devops_creds: AzureDevOpsCredentials, conf
     """Get all repositories from the project and filter them to find the list of them to edit"""
     repositories_result = call_api(azure_devops_creds, 'GET', f'/{configuration.project.name}/_apis/git/repositories?api-version=6.0')
     repositories = list[Repository]()
-    for repository in json.loads(repositories_result)["value"]:
+    for repository in json.loads(repositories_result)['value']:
         repository_model = repository_from_dict(repository)
         flags = re.IGNORECASE if configuration.repository.ignore_case else 0
         if re.match(configuration.repository.pattern, repository_model.name, flags):

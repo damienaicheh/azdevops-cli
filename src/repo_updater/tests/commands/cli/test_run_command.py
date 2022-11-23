@@ -2,8 +2,8 @@ import os
 import unittest
 from unittest.mock import Mock 
 from unittest.mock import patch 
-from repos_updater.commands.cli.run_command import RunCommand
-from repos_updater.exceptions.repo_updater_exception import RepoUpdaterException
+from repo_updater.commands.cli.run_command import RunCommand
+from repo_updater.exceptions.repo_updater_exception import RepoUpdaterException
 
 class TestRunCommand(unittest.TestCase):
 

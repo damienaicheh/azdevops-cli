@@ -3,7 +3,7 @@
 
 from logging import Logger
 from abc import ABC, abstractmethod
-from repos_updater.commands.files.file_command_args import FileCommandArgs
+from repo_updater.commands.files.file_command_args import FileCommandArgs
 
 class FileCommand(ABC):
     def __init__(self, logger: Logger):

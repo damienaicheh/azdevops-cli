@@ -3,7 +3,7 @@
 
 import click
 from helpers.logger import create_logger
-from repos_updater.commands.cli.run_command import RunCommand
+from repo_updater.commands.cli.run_command import RunCommand
 
 @click.group(name='repos-updater')
 def repo_updater():

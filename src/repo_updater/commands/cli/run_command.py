@@ -23,10 +23,10 @@ from helpers.azure_devops import (
     commit_and_push_changes
 )
 
-from repos_updater.commands.files.catalog import get_catalog
+from repo_updater.commands.files.catalog import get_catalog
 
-from repos_updater.exceptions.repo_updater_exception import RepoUpdaterException
-from repos_updater.commands.files.file_command_args import FileCommandArgs
+from repo_updater.exceptions.repo_updater_exception import RepoUpdaterException
+from repo_updater.commands.files.file_command_args import FileCommandArgs
 
 class RunCommand(CliCommand):
 
@@ -97,7 +97,7 @@ class RunCommand(CliCommand):
             self.logger.debug(configuration.project.name)
             return configuration
 
-    def get_command_args(assets_directory: str, output: str, repository: Repository, action: Action)-> FileCommandArgs:
+    def build_command_args(self, assets_directory: str, output: str, repository: Repository, action: Action)-> FileCommandArgs:
         """Get file command args"""
         assert_absolute_path = assets_directory
         if not os.path.isabs(assets_directory):
@@ -126,7 +126,8 @@ class RunCommand(CliCommand):
                 for action in configuration.actions:
                     command = command_catalog.get(action.name)
                     if command:
-                        command.execute(self.get_command_args(configuration.assets_directory, output, ))
+                        args = self.build_command_args(configuration.assets_directory, output, repository, action)
+                        command.execute(args)
                 if not dry_run:
                     # commit and push source on new branch
                     commit_and_push_changes(git_client, configuration.pull_request, self.logger)
