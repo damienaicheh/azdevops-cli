@@ -17,9 +17,9 @@ steps:
   - checkout: self
   
   - task: UsePythonVersion@0
-    displayName: 'Use python 3.8'
+    displayName: 'Use python 3.10'
     inputs:
-      versionSpec: '3.8'
+      versionSpec: '3.10'
       addToPath: true
       architecture: 'x64'
   
