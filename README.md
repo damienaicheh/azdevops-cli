@@ -6,8 +6,8 @@
 
 | Branch                      |  Build | Quality Gate |
 |-----------------------------|--------|--------------|
-| master                      | ![](https://dev.azure.com/damienaicheh/azdevops-cli/_apis/build/status/gwendallg.rsql4net?branchName=master)| [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=gwendallg_rsql4net&branch=master&metric=alert_status)](https://sonarcloud.io/dashboard?id=gwendallg_rsql4net&branch=master) |
-| develop                     | ![](https://dev.azure.com/gwendallg/rsql4net/_apis/build/status/gwendallg.rsql4net?branchName=develop) | | 
+| main                        |[![Build Status](https://dev.azure.com/damienaicheh0990/azdevops-cli/_apis/build/status/damienaicheh.azdevops-cli?branchName=main)](https://dev.azure.com/damienaicheh0990/azdevops-cli/_build/latest?definitionId=95&branchName=main)| [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=gwendallg_rsql4net&branch=master&metric=alert_status)](https://sonarcloud.io/dashboard?id=gwendallg_rsql4net&branch=master) |
+| develop                     | [![Build Status](https://dev.azure.com/damienaicheh0990/azdevops-cli/_apis/build/status/damienaicheh.azdevops-cli?branchName=develop)](https://dev.azure.com/damienaicheh0990/azdevops-cli/_build/latest?definitionId=95&branchName=develop)| | 
 
 ## I.Introduction
 
