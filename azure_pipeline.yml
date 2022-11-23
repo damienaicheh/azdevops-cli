@@ -41,6 +41,7 @@ steps:
       targetType: 'inline'
       workingDirectory: $(Build.SourcesDirectory)/src
       script: |
+        set -x
         source .venv/bin/activate
         coverage run -m unittest discover
   
@@ -50,6 +51,7 @@ steps:
       targetType: 'inline'
       workingDirectory: $(Build.SourcesDirectory)/src
       script: |
+        source .venv/bin/activate
         pip install build
         python -m build
 
@@ -66,6 +68,7 @@ steps:
     inputs:
       targetType: 'inline'
       script: |
+      
         pip install twine
 
   - task: TwineAuthenticate@1
