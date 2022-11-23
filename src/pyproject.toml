@@ -7,13 +7,12 @@ authors = [
 ]
 description = "An Azure DevOps cli tool"
 readme = "README.md"
-requires-python = ">=3.11"
+requires-python = ">=3.8"
 classifiers = [
-    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.8",
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
 ]
-
 [project.urls]
 "Homepage" = "https://github.com/damienaicheh/azdev-cli"
 "Bug Tracker" = "https://github.com/damienaicheh/azdev-cli/issues"
