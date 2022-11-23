@@ -2,10 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import os
-from models.configuration import *
-from models.repository import *
-from helpers.azure_devops import *
-from repos_updater.helpers.files_actions import *
+import re
 from repos_updater.commands.files.file_command import FileCommand
 from repos_updater.commands.files.file_command_args import FileCommandArgs
 
@@ -15,7 +12,7 @@ class UpdateFileCommand(FileCommand):
         """initializes a new instance of the class"""
         super().__init__(logger)
   
-    def _on_execute(self, args: FileCommandArgs):
+    def _on_execute(self, args: FileCommandArgs) -> None:
         """Update the files of a repository based on a regex"""
         for file in args.files:
             path = file.path if file.path != None else ''

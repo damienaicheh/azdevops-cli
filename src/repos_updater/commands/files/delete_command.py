@@ -2,10 +2,6 @@
 # -*- coding: utf-8 -*-
 
 import os
-from models.configuration import *
-from models.repository import *
-from helpers.azure_devops import *
-from repos_updater.helpers.files_actions import *
 from repos_updater.commands.files.file_command import FileCommand
 from repos_updater.commands.files.file_command_args import FileCommandArgs
 
@@ -15,7 +11,7 @@ class DeleteFileCommand(FileCommand):
         """initializes a new instance of the class"""
         super().__init__(logger)
   
-    def _on_execute(self, args: FileCommandArgs):
+    def _on_execute(self, args: FileCommandArgs) -> None:
         """Delete list of files from the repository"""
         self.logger.info(f"Delete files inside repository {args.repository.name}")
         for file in args.files:

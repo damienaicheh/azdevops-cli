@@ -3,9 +3,6 @@
 
 import os
 import shutil
-from models.configuration import *
-from models.repository import *
-from helpers.azure_devops import *
 from repos_updater.commands.files.file_command import FileCommand
 from repos_updater.commands.files.file_command_args import FileCommandArgs
 

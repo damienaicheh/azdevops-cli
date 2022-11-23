@@ -3,12 +3,21 @@
 
 import base64
 import json
-import os
 import re
 from models.azure_devops_credentials import AzureDevOpsCredentials
-import requests
-from models.configuration import *
-from models.repository import *
+from requests import request
+from models.configuration import (
+    Configuration,
+    List,
+    PullRequest,
+    configuration_from_dict
+)
+from logging import Logger
+
+from models.repository import (
+    Repository,
+    repository_from_dict
+)
 
 def call_api(azure_devops_creds: AzureDevOpsCredentials, method: str, path: str, body = None) -> str:
     """Generic method to do api calls to the API"""
@@ -19,7 +28,7 @@ def call_api(azure_devops_creds: AzureDevOpsCredentials, method: str, path: str,
         'Authorization': f"Basic {encoded_pat_token.decode('utf-8')}",
     }
 
-    response = requests.request(
+    response = request(
                 method=method,
                 url = f'{azure_devops_creds.organization_url}{path}',
                 headers = headers,
@@ -48,3 +57,13 @@ def create_pull_request(azure_devops_creds: AzureDevOpsCredentials, repository: 
         'title': f"{configuration.pull_request.name}"
     }
     call_api(azure_devops_creds, 'POST', f"/{configuration.project.name}/_apis/git/repositories/{repository.id}/pullrequests?api-version=6.0", body)
+
+def commit_and_push_changes(git_client, pull_request: PullRequest, logger: Logger) -> None:
+    """Commit and push changes on the repository"""
+    current = git_client.create_head(pull_request.branch)
+    current.checkout()
+    git_client.git.add(A=True)
+    logger.debug(git_client.git.status())
+    git_client.git.commit(m=pull_request.name)
+    git_client.git.push('--set-upstream', 'origin', current)
+    logger.debug(git_client.git.status())
