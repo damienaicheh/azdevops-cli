@@ -48,8 +48,24 @@ steps:
         if [ $? != 0 ] ; then
           exit 1
         fi
-        coverage report
+        coverage xml
   
+  #- task: reportgenerator@5
+  #  displayName: 'Generate code coverage report'
+  #  inputs:
+  #    reports: '$(Build.SourcesDirectory)/src/coverage.xml'
+  #    targetdir: '$(Build.SourcesDirectory)/codecoverage'
+  #    sourcedirs: '$(Build.SourcesDirectory)/src'
+  #    verbosity: 'Verbose'
+  #    historydir: '$(codecoveragehistory.directory)'
+
+  - task: PublishCodeCoverageResults@1
+    displayName: 'Publish code coverage report'
+    inputs:
+      codeCoverageTool: Cobertura
+      summaryFileLocation: '$(Build.SourcesDirectory)/src/coverage.xml'
+      reportDirectory: '$(Build.SourcesDirectory)/codecoverage'
+ 
   - task: Bash@3
     displayName: 'Build and package the CLI'
     inputs:
