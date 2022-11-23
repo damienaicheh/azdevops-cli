@@ -3,9 +3,9 @@
 
 import os
 import re
-import yaml
 import traceback
 import sys
+import yaml
 from git import Repo
 from base.commands.cli.cli_command import CliCommand
 from models.azure_devops_credentials import AzureDevOpsCredentials
