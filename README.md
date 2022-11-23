@@ -1,5 +1,14 @@
 # AzDev CLI
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://github.com/gwendallg/rsql4net/blob/develop/LICENSE) [![Nuget](https://img.shields.io/nuget/v/rsql4net)]()
+
+## Continuous integration
+
+| Branch                      |  Build | Quality Gate |
+|-----------------------------|--------|--------------|
+| master                      | ![](https://dev.azure.com/damienaicheh/azdevops-cli/_apis/build/status/gwendallg.rsql4net?branchName=master)| [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=gwendallg_rsql4net&branch=master&metric=alert_status)](https://sonarcloud.io/dashboard?id=gwendallg_rsql4net&branch=master) |
+| develop                     | ![](https://dev.azure.com/gwendallg/rsql4net/_apis/build/status/gwendallg.rsql4net?branchName=develop) | | 
+
 ## I.Introduction
 
 This project is used to update all selected repositories in one single script define by a `config.yml` file.

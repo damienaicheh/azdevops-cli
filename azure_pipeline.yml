@@ -17,9 +17,9 @@ steps:
   - checkout: self
   
   - task: UsePythonVersion@0
-    displayName: 'Use python 3.11'
+    displayName: 'Use python 3.8'
     inputs:
-      versionSpec: '3.11'
+      versionSpec: '3.8'
       addToPath: true
       architecture: 'x64'
   
@@ -34,6 +34,15 @@ steps:
         python3 -m venv .venv
         source .venv/bin/activate
         pip install --target="./.python_packages/lib/site-packages" -r requirements.txt
+
+  - task: Bash@3
+    displayName: 'Unit tests'
+    inputs:
+      targetType: 'inline'
+      workingDirectory: $(Build.SourcesDirectory)/src
+      script: |
+        source .venv/bin/activate
+        coverage run -m unittest discover
   
   - task: Bash@3
     displayName: 'Build and package the CLI'
