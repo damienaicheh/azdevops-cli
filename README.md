@@ -1,4 +1,4 @@
-# AzDev CLI
+# AzDevOps CLI
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://github.com/gwendallg/rsql4net/blob/develop/LICENSE) [![Pypi](https://img.shields.io/pypi/v/PACKAGE?label=azdevops-cli)]()
 
