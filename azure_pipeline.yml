@@ -60,7 +60,7 @@ steps:
       workingDirectory: $(Build.SourcesDirectory)/src
       script: |
         set -x
-        source .venv/bin/activate
+        # source .venv/bin/activate
         coverage run -m unittest discover
         if [ $? != 0 ] ; then
           exit 1
