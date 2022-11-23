@@ -30,9 +30,9 @@ steps:
       workingDirectory: $(Build.SourcesDirectory)/src
       script: |
         set -x
+        # python3 -m venv .venv
+        # source .venv/bin/activate
         python3 -m pip install --upgrade pip
-        python3 -m venv .venv
-        source .venv/bin/activate
         pip install --target="./.python_packages/lib/site-packages" -r requirements.txt
 
   - task: Bash@3
@@ -42,7 +42,7 @@ steps:
       workingDirectory: $(Build.SourcesDirectory)/src
       script: |
         set -x
-        source .venv/bin/activate
+        # source .venv/bin/activate
         coverage run -m unittest discover
   
   - task: Bash@3
