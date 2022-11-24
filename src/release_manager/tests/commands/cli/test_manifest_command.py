@@ -30,6 +30,18 @@ class TestManifestCommand(unittest.TestCase):
             self.command.get_output(obj)
         self.assertTrue('not valid' in ex.exception.message)
 
+    def test_should_be_application_name_from_parameter(self):
+       obj = {'application_name': 'azdevops-cli'}
+       actual = 'azdevops-cli'
+       excepted = self.command.get_application_name(obj)
+       self.assertEqual(actual, excepted)
+
+    def test_should_be_application_name_throw_exception_required(self):
+        with self.assertRaises(ReleaseManagerException) as ex:
+            obj = {}
+            self.command.get_output(obj)
+        self.assertTrue('required' in ex.exception.message)
+
     def test_should_be_output_default(self):
        obj = {}
        actual = os.getcwd()
