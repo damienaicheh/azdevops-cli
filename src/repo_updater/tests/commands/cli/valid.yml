@@ -1,0 +1,23 @@
+project:
+  name: My Project
+pull_request:
+  name: 'feat(1234): Update variable group to use last version'
+  branch: 'features/add_missing_elements_42'
+repository:
+  default_branch: develop
+  pattern: ^aa_infra_bb$
+  ignore_case: true 
+actions:
+  - name: add
+    files:
+      - name: azure_pipeline.yml
+        pattern: (?P<content>common.versions.primary.shares)
+        value: common.versions.secondary.shares
+      - name: azure_pipeline.yml
+        pattern: :\s+[\"|']?(?P<content>frc)[\"|']?
+        value: en
+      - name: azure_pipeline.yml
+        pattern: :\s+[\"|']?(?P<content>dev)[\"|']?
+        search: replace
+        ignore_case: true # default to false
+        value: val

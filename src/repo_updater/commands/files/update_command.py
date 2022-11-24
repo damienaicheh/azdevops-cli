@@ -1,6 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-
 import os
 import re
 from repo_updater.commands.files.file_command import FileCommand
@@ -28,8 +25,14 @@ class UpdateFileCommand(FileCommand):
                         for line in lines:
                             flags = re.IGNORECASE if file.ignore_case else 0
                             regex_result = re.search(file.pattern, line, flags)
-                            if regex_result and regex_result.group('content') != None:
-                                result += line.replace(regex_result.group('content'), file.replace)
+                            if regex_result:
+                                if args.search == 'after':
+                                    result += line
+                                    result += file.value + '\n'
+                                elif args.search == 'before':
+                                    result += file.value + '\n'
+                                elif regex_result.group('content'):
+                                    result += line.replace(regex_result.group('content'), file.value)
                             else:
                                 result += line
                         write_file.write(result)

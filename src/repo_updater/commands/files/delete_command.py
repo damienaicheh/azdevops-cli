@@ -1,6 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-
 import os
 from repo_updater.commands.files.file_command import FileCommand
 from repo_updater.commands.files.file_command_args import FileCommandArgs

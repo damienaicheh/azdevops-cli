@@ -1,6 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-
 from logging import Logger
 from abc import ABC, abstractmethod
 from repo_updater.commands.files.file_command_args import FileCommandArgs

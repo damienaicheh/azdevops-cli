@@ -124,7 +124,19 @@ class TestRunCommand(unittest.TestCase):
         self.assertTrue('not valid' in ex.exception.message)
 
     def test_should_be_load_configuration_valid(self):
-        obj = {'configuration_file' : '../templates/example/config.yml'}
+        obj = {'configuration_file' : 'repo_updater/tests/commands/cli/valid.yml'}
         configuration_file = self.command.get_configuration_path_file(obj)
         expected = self.command.load_configuration(configuration_file)
         self.assertTrue(len(expected.actions)>0)
+
+    def test_should_be_load_configuration_invalid_format(self):
+        obj = {'configuration_file' : 'repo_updater/tests/commands/cli/test_run_command.py'}
+        with self.assertRaises(RepoUpdaterException) as ex:
+            self.command.load_configuration(obj)
+        self.assertTrue('don\'t have a valid format.' in ex.exception.message)
+
+    def test_should_be_load_configuration_invalid_schema(self):
+        obj = {'configuration_file' : 'repo_updater/tests/commands/cli/invalid.yml'}
+        with self.assertRaises(RepoUpdaterException) as ex:
+            self.command.load_configuration(obj)
+        self.assertTrue("don't have a valid format." in ex.exception.message)

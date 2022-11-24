@@ -1,4 +1,3 @@
-
 from logging import Logger
 from repo_updater.commands.files.add_command import AddFileCommand
 from repo_updater.commands.files.update_command import UpdateFileCommand

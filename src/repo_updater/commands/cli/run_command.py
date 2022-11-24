@@ -1,6 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-
 import os
 import re
 import traceback
@@ -9,13 +6,11 @@ import yaml
 from git import Repo
 from base.commands.cli.cli_command import CliCommand
 from models.azure_devops_credentials import AzureDevOpsCredentials
-
 from helpers.azure_devops import (
     create_pull_request,
     get_repositories_to_process,
     commit_and_push_changes
 )
-
 from repo_updater.commands.files.catalog import get_catalog
 from repo_updater.exceptions.repo_updater_exception import RepoUpdaterException
 from repo_updater.commands.files.file_command_args import FileCommandArgs
@@ -85,27 +80,33 @@ class RunCommand(CliCommand):
     
     def load_configuration(self, configuration_file: str):
         """Load the configuration from the YAML file"""
-        with open(configuration_file, 'r') as file:
-            self.logger.info('Load configuration...')
-            document = yaml.load(file, Loader=yaml.FullLoader)
-            v = Validator(Schema)
-            if not v.validate(document):
-                raise ValueError('')
-            configuration = dic2object(document)
-            print(configuration)
-            self.logger.debug(configuration.project.name)
-            return configuration
+        try:
+            with open(configuration_file, 'r') as file:
+                self.logger.info('Load configuration...')
+                document = yaml.load(file, Loader=yaml.FullLoader)
+                v = Validator(Schema)
+                if not v.validate(document):
+                    self.logger.error(v._errors)
+                    raise RepoUpdaterException(f'The configuration file \'{configuration_file}\' don\'t have a valid schema.')
+                configuration = dic2object(document)
+                self.logger.debug(configuration.project.name)
+                return configuration
+        except RepoUpdaterException as ruex:
+            raise ruex
+        except:
+            raise RepoUpdaterException(f'The configuration file \'{configuration_file}\' don\'t have a valid format.')
 
-    def build_command_args(self, assets_directory: str, output: str, repository, action)-> FileCommandArgs:
+    def build_command_args(self, configuration, output, repository, action) -> FileCommandArgs:
         """Get file command args"""
-        assert_absolute_path = assets_directory
-        if not os.path.isabs(assets_directory):
-            assert_absolute_path = os.path.join(os.getcwd(), assets_directory)
+        assert_absolute_path = configuration.assets_directory
+        if not os.path.isabs(configuration.assets_directory):
+            assert_absolute_path = os.path.join(os.getcwd(), configuration.assets_directory)
         return  FileCommandArgs(
             assets_directory = assert_absolute_path,
             output = output,
             repository = repository,
-            file = action.files
+            file = action.files,
+            search = action.search if action.search else 'replace'
         )
 
     def _on_execute(self, obj):
@@ -118,15 +119,13 @@ class RunCommand(CliCommand):
             azure_devops_creds = AzureDevOpsCredentials(organization_url, pat_token)
             configuration = self.load_configuration(configuration_file)
             command_catalog = get_catalog()
-
+        
             for repository in get_repositories_to_process(azure_devops_creds, configuration):
                 # For each repository apply all actions 
                 git_client = Repo.clone_from(repository.remote_url, to_path=os.path.join(output, repository.name), branch= configuration.repository.default_branch)
                 for action in configuration.actions:
-                    command = command_catalog.get(action.name)
-                    if command:
-                        args = self.build_command_args(configuration.assets_directory, output, repository, action)
-                        command.execute(args)
+                    args = self.build_command_args(configuration.assets_directory, output, repository, action)
+                    command_catalog[action.name].execute(args)
                 if not dry_run:
                     # commit and push source on new branch
                     commit_and_push_changes(git_client, configuration.pull_request, self.logger)
