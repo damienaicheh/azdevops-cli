@@ -1,0 +1,34 @@
+project:
+  name: My Project
+pull_request:
+  name: 'feat(1234): Update variable group to use last version'
+  branch: 'features/add_missing_elements_42'
+repository:
+  default_branch: develop
+  pattern: ^aa_infra_bb$
+  ignore_case: true # default to false
+assets_directory: ''
+actions:
+  - name: delete
+    files: 
+      - name: README.md
+      - name: rg.tf
+        path: 'infrastructure-live'
+  - name: add
+    files: 
+      - name: UPDATE.md
+      - name: UPDATE copy.md
+        path: 'env-vars'
+        override: false
+  - name: update
+    files:
+      - name: azure_pipeline.yml
+        pattern: (?P<content>common.versions.primary.shares)
+        replace: common.versions.secondary.shares
+      - name: azure_pipeline.yml
+        pattern: :\s+[\"|']?(?P<content>frc)[\"|']?
+        replace: en
+      - name: azure_pipeline.yml
+        pattern: :\s+[\"|']?(?P<content>dev)[\"|']?
+        ignore_case: true # default to false
+        replace: val
