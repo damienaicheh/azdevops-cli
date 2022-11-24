@@ -99,6 +99,7 @@ steps:
 =======
 
   - task: Bash@3
+<<<<<<< HEAD
     displayName: 'Unit tests and coverage'
     inputs:
       targetType: 'inline'
@@ -112,6 +113,8 @@ steps:
 
 >>>>>>> 1860131 (feat: ls -al)
   - task: Bash@3
+=======
+>>>>>>> d922647 (feat:    move task.)
     displayName: 'Build and package the CLI'
     inputs:
       targetType: 'inline'
@@ -121,11 +124,17 @@ steps:
         pip install build
         python -m build
 
+<<<<<<< HEAD
   # - task: SonarCloudAnalyze@1
 
   # - task: SonarCloudPublish@1
   #   inputs:
   #     pollingTimeoutSec: '300'
+=======
+  - task: SonarCloudPublish@1
+    inputs:
+      pollingTimeoutSec: '300'
+>>>>>>> d922647 (feat:    move task.)
 
   - task: PublishBuildArtifacts@1
     displayName: 'Publish artifact'
