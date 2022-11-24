@@ -108,6 +108,7 @@ class TestRunCommand(unittest.TestCase):
        actual = os.path.join(os.getcwd(),'../')
        excepted = self.command.get_output(obj)
        self.assertEqual(actual, excepted)
+<<<<<<< HEAD
 
     @patch('os.path.isdir')
     def test_should_be_output_relatif_from_cli(self, mock_isdir) -> None:
@@ -116,6 +117,8 @@ class TestRunCommand(unittest.TestCase):
        actual = os.path.join(os.getcwd(),'aa/bb')
        excepted = self.command.get_output(obj)
        self.assertEqual(actual, excepted)
+=======
+>>>>>>> c9a74d7 (feat: Start adding tests for manifest command.)
 
     def test_should_be_output_throw_exception_not_valid(self):
         with self.assertRaises(RepoUpdaterException) as ex:
