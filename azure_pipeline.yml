@@ -43,12 +43,25 @@ steps:
       scannerMode: 'CLI'
       configMode: 'manual'
       cliProjectKey: 'damienaicheh_azdevops-cli'
-      cliProjectName: 'azdevops-cli'
-      cliProjectVersion: '$(Build.Id)'
       cliSources: '$(Build.SourcesDirectory)/src'
       extraProperties: |
         sonar.exclusions=**/*.bin
         sonar.python.coverage.reportPath=$(Build.SourcesDirectory)/src/coverage.xml
+
+      
+  # - task: SonarCloudPrepare@1
+  #   inputs:
+  #     SonarCloud: 'damienaicheh-sonar'
+  #     organization: 'damienaicheh'
+  #     scannerMode: 'CLI'
+  #     configMode: 'manual'
+  #     cliProjectKey: 'damienaicheh_azdevops-cli'
+  #     cliProjectName: 'azdevops-cli'
+  #     cliProjectVersion: '$(Build.Id)'
+  #     cliSources: '$(Build.SourcesDirectory)/src'
+  #     extraProperties: |
+  #       sonar.exclusions=**/*.bin
+  #       sonar.python.coverage.reportPath=$(Build.SourcesDirectory)/src/coverage.xml
 
   - task: Bash@3
     displayName: 'Unit tests and coverage'
