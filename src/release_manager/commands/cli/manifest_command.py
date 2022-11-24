@@ -25,8 +25,8 @@ class ManifestCommand(CliCommand):
         return result
 
     def _on_execute(self, obj):
-        project_path = get_valid_folder_path(self, obj, 'project_path')
-        application_name = get_valid_folder_path(self, obj, 'output')
+        project_path = get_valid_folder_path(obj, 'project_path')
+        application_name = get_valid_folder_path(obj, 'output')
         output = self.get_output(obj)
         try:
             generate_manifest(project_path, application_name, output)
