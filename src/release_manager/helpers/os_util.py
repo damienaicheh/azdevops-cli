@@ -4,7 +4,11 @@
 import os
 from release_manager.exceptions.release_manager_exception import ReleaseManagerException
 
+<<<<<<< HEAD
 def get_valid_folder_path(obj, key: str) -> str:
+=======
+def get_valid_folder_path(self, obj, key: str) -> str:
+>>>>>>> bb6f874 (feat: Mutualize code and tests.)
     """Define an absolute directory path"""
     result = os.getcwd()
     if key in obj:

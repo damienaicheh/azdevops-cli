@@ -14,8 +14,8 @@ class ChangeLogCommand(CliCommand):
         super().__init__(logger)
 
     def _on_execute(self, obj):
-        project_path = get_valid_folder_path(obj, 'project_path')
-        output = get_valid_folder_path(obj, 'output')
+        project_path = get_valid_folder_path(self, obj, 'project_path')
+        output = get_valid_folder_path(self, obj, 'output')
         try:
             generate_changelog(project_path, output)
         except:

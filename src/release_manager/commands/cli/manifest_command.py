@@ -7,6 +7,7 @@ import sys
 from base.commands.cli.cli_command import CliCommand
 from release_manager.helpers.manifest_generator import generate_manifest
 from release_manager.exceptions.release_manager_exception import ReleaseManagerException
+from release_manager.helpers.os_util import get_valid_folder_path
 
 class ManifestCommand(CliCommand):
 
@@ -23,28 +24,9 @@ class ManifestCommand(CliCommand):
             raise ReleaseManagerException(f'The application name is required.')
         return result
 
-    def get_project_path(self, obj) -> str:
-        """Define the absolute project path"""
-        return self._get_valid_folder_path(obj, 'project_path')
-
-    def get_output(self, obj) -> str:
-        """Define the absolute output directory path"""
-        return self._get_valid_folder_path(obj, 'output')
-
-    def _get_valid_folder_path(self, obj, key: str) -> str:
-        """Define an absolute directory path"""
-        result = os.getcwd()
-        if key in obj:
-            result = obj[key]
-        if not os.path.isabs(result):
-            result = os.path.join(os.getcwd(), result)
-        if not os.path.isdir(result):
-            raise ReleaseManagerException(f'The {key} directory {result} is not valid.')
-        return result
-
     def _on_execute(self, obj):
-        project_path = self.get_project_path(obj)
-        application_name = self.get_application_name(obj)
+        project_path = get_valid_folder_path(self, obj, 'project_path')
+        application_name = get_valid_folder_path(self, obj, 'output')
         output = self.get_output(obj)
         try:
             generate_manifest(project_path, application_name, output)
