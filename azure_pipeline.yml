@@ -53,6 +53,17 @@ steps:
   #       sonar.python.coverage.reportPath=$(Build.SourcesDirectory)/src/coverage.xml
   #       sonar.scanner.metadataFilePath=$(Build.SourcesDirectory)/src/report-task.txt
 
+  - task: SonarCloudPrepare@1
+    inputs:
+      SonarCloud: 'damienaicheh-sonar'
+      organization: 'damienaicheh'
+      scannerMode: 'CLI'
+      configMode: 'manual'
+      cliProjectKey: 'damienaicheh_azdevops-cli'
+      cliProjectName: 'azdevops-cli'
+      cliProjectVersion: '$(Build.Id)'
+      cliSources: '$(Build.SourcesDirectory)/src'
+
   - task: Bash@3
     displayName: 'Unit tests and coverage'
     inputs:
@@ -74,6 +85,12 @@ steps:
       sourcedirs: '$(Build.SourcesDirectory)/src'
       verbosity: 'Verbose'
       historydir: '$(codecoveragehistory.directory)'
+
+  - task: SonarCloudAnalyze@1
+
+  - task: SonarCloudPublish@1
+    inputs:
+      pollingTimeoutSec: '300'
 
   - task: PublishCodeCoverageResults@1
     displayName: 'Publish code coverage report'
