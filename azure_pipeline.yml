@@ -89,8 +89,7 @@ steps:
       targetType: 'inline'
       workingDirectory: $(Build.SourcesDirectory)/src
       script: |
-        echo report-task.txt:
-        cat report-task.txt
+        ls -al
  
   - task: SonarCloudPublish@1
     inputs:
