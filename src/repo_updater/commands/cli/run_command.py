@@ -105,8 +105,7 @@ class RunCommand(CliCommand):
             assets_directory = assert_absolute_path,
             output = output,
             repository = repository,
-            file = action.files,
-            search = action.search if action.search else 'replace'
+            file = action.files
         )
 
     def _on_execute(self, obj):

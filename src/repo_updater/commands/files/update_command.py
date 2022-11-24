@@ -26,11 +26,12 @@ class UpdateFileCommand(FileCommand):
                             flags = re.IGNORECASE if file.ignore_case else 0
                             regex_result = re.search(file.pattern, line, flags)
                             if regex_result:
-                                if args.search == 'after':
+                                if file.search == 'after':
                                     result += line
                                     result += file.value + '\n'
-                                elif args.search == 'before':
+                                elif file.search == 'before':
                                     result += file.value + '\n'
+                                    result += line
                                 elif regex_result.group('content'):
                                     result += line.replace(regex_result.group('content'), file.value)
                             else:
