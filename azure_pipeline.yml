@@ -50,14 +50,14 @@ steps:
         fi
         coverage xml
   
-  #- task: reportgenerator@5
-  #  displayName: 'Generate code coverage report'
-  #  inputs:
-  #    reports: '$(Build.SourcesDirectory)/src/coverage.xml'
-  #    targetdir: '$(Build.SourcesDirectory)/codecoverage'
-  #    sourcedirs: '$(Build.SourcesDirectory)/src'
-  #    verbosity: 'Verbose'
-  #    historydir: '$(codecoveragehistory.directory)'
+  - task: reportgenerator@5
+    displayName: 'Generate code coverage report'
+    inputs:
+      reports: '$(Build.SourcesDirectory)/src/coverage.xml'
+      targetdir: '$(Build.SourcesDirectory)/codecoverage'
+      sourcedirs: '$(Build.SourcesDirectory)/src'
+      verbosity: 'Verbose'
+      historydir: '$(codecoveragehistory.directory)'
 
   - task: PublishCodeCoverageResults@1
     displayName: 'Publish code coverage report'
