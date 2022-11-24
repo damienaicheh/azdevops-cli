@@ -18,7 +18,7 @@ class ManifestCommand(CliCommand):
         """Get the application name"""
         result = obj['application_name']
         if not result or result.strip() == '':
-            raise ReleaseManagerException(f'The configuration file is required.')
+            raise ReleaseManagerException(f'The application name is required.')
         return result
 
     def get_project_path(self, obj) -> str:
