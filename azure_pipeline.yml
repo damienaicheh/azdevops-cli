@@ -95,6 +95,22 @@ steps:
       codeCoverageTool: Cobertura
       summaryFileLocation: '$(Build.SourcesDirectory)/src/coverage.xml'
       reportDirectory: '$(Build.SourcesDirectory)/codecoverage'
+<<<<<<< HEAD
+=======
+
+  - task: Bash@3
+    displayName: 'Unit tests and coverage'
+    inputs:
+      targetType: 'inline'
+      workingDirectory: $(Build.SourcesDirectory)/src
+      script: |
+        ls -al
+ 
+  - task: SonarCloudPublish@1
+    inputs:
+      pollingTimeoutSec: '300'
+
+>>>>>>> 1860131 (feat: ls -al)
   - task: Bash@3
     displayName: 'Build and package the CLI'
     inputs:
