@@ -101,13 +101,13 @@ class TestRunCommand(unittest.TestCase):
        obj = {}
        actual = os.getcwd()
        excepted = self.command.get_output(obj)
-       self.assertEqual( actual, excepted)
+       self.assertEqual(actual, excepted)
 
     def test_should_be_output_from_cli(self):
        obj = {'output': os.path.join(os.getcwd(),'../') }
        actual = os.path.join(os.getcwd(),'../')
        excepted = self.command.get_output(obj)
-       self.assertEqual( actual, excepted)
+       self.assertEqual(actual, excepted)
 
     def test_should_be_output_throw_exception_not_valid(self):
         with self.assertRaises(RepoUpdaterException) as ex:
