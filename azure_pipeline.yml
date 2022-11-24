@@ -126,11 +126,15 @@ steps:
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> cb0b550 (feat: Disable sonar)
   # - task: SonarCloudAnalyze@1
 
   # - task: SonarCloudPublish@1
   #   inputs:
   #     pollingTimeoutSec: '300'
+<<<<<<< HEAD
 =======
 =======
   - task: SonarCloudAnalyze@1
@@ -140,6 +144,8 @@ steps:
     inputs:
       pollingTimeoutSec: '300'
 >>>>>>> d922647 (feat:    move task.)
+=======
+>>>>>>> cb0b550 (feat: Disable sonar)
 
   - task: PublishBuildArtifacts@1
     displayName: 'Publish artifact'
