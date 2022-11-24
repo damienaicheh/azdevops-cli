@@ -15,13 +15,14 @@ def generate_manifest(project_path: str, application_name: str, output: str):
     file.truncate(0)
 
     manifest = {
+        "ApplicationName": application_name,
         "PipelineName" : get_env("BUILD_DEFINITIONNAME"),
         "BuildId": get_env("BUILD_BUILDID"),
         "BuildNumber": get_env("BUILD_BUILDNUMBER"),
         "SourceBranchName": get_env("BUILD_SOURCEBRANCHNAME"),
         "Scm": get_env("BUILD_REPOSITORY_NAME"),
         "Sha1": initial_commit,
-        "Tag": lastest_tag
+        "LatestTag": lastest_tag
     }
 
     file.write(json.dumps(manifest))

@@ -112,7 +112,7 @@ class RunCommand(CliCommand):
     def _on_execute(self, obj):
         try:
             dry_run = self.get_dry_run(obj)
-            configuration_file = self.get_configuration_file(obj)
+            configuration_file = self.get_configuration_path_file(obj)
             organization_url = self.get_organization_url(obj)
             pat_token = self.get_pat_token(obj)
             output = self.get_output(obj)
