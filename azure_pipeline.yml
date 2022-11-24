@@ -65,6 +65,7 @@ steps:
       cliSources: '$(Build.SourcesDirectory)/src'
       extraProperties: |
         sonar.python.coverage.reportPath=$(Build.SourcesDirectory)/src/coverage.xml
+        sonar.scanner.metadataFilePath=$(Build.SourcesDirectory)/src/report-task.txt
 
   - task: Bash@3
     displayName: 'Unit tests and coverage'
