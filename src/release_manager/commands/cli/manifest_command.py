@@ -6,7 +6,7 @@ import traceback
 import sys
 from base.commands.cli.cli_command import CliCommand
 from release_manager.helpers.manifest_generator import generate_manifest
-from src.release_manager.exceptions.release_manager_exception import ReleaseManagerException
+from release_manager.exceptions.release_manager_exception import ReleaseManagerException
 
 class ManifestCommand(CliCommand):
 
@@ -16,20 +16,22 @@ class ManifestCommand(CliCommand):
 
     def get_application_name(self, obj) -> str:
         """Get the application name"""
-        result = obj['application_name']
+        result = ''
+        if 'application_name' in obj:
+            result = obj['application_name']
         if not result or result.strip() == '':
             raise ReleaseManagerException(f'The application name is required.')
         return result
 
     def get_project_path(self, obj) -> str:
         """Define the absolute project path"""
-        return self._get_valid_folder_path(self, obj, 'project_path')
+        return self._get_valid_folder_path(obj, 'project_path')
 
     def get_output(self, obj) -> str:
         """Define the absolute output directory path"""
-        return self._get_valid_folder_path(self, obj, 'output')
+        return self._get_valid_folder_path(obj, 'output')
 
-    def _get_valid_folder_path(self, obj, key) -> str:
+    def _get_valid_folder_path(self, obj, key: str) -> str:
         """Define an absolute directory path"""
         result = os.getcwd()
         if key in obj:
