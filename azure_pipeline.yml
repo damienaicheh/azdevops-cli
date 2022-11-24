@@ -125,12 +125,17 @@ steps:
         python -m build
 
 <<<<<<< HEAD
+<<<<<<< HEAD
   # - task: SonarCloudAnalyze@1
 
   # - task: SonarCloudPublish@1
   #   inputs:
   #     pollingTimeoutSec: '300'
 =======
+=======
+  - task: SonarCloudAnalyze@1
+  
+>>>>>>> 2f783ad (feat: - task: SonarCloudAnalyze@1)
   - task: SonarCloudPublish@1
     inputs:
       pollingTimeoutSec: '300'
