@@ -1,3 +1,6 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
 from exceptions.azdevops_exception import AzDevOpsException
 
 class RepoUpdaterException(AzDevOpsException):
