@@ -82,6 +82,15 @@ steps:
       codeCoverageTool: Cobertura
       summaryFileLocation: '$(Build.SourcesDirectory)/src/coverage.xml'
       reportDirectory: '$(Build.SourcesDirectory)/codecoverage'
+
+  - task: Bash@3
+    displayName: 'Unit tests and coverage'
+    inputs:
+      targetType: 'inline'
+      workingDirectory: $(Build.SourcesDirectory)/src
+      script: |
+        echo report-task.txt:
+        cat report-task.txt
  
   - task: SonarCloudPublish@1
     inputs:
