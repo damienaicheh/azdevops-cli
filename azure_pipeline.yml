@@ -73,12 +73,6 @@ steps:
       verbosity: 'Verbose'
       historydir: '$(codecoveragehistory.directory)'
 
-  - task: SonarCloudAnalyze@1
-
-  - task: SonarCloudPublish@1
-    inputs:
-      pollingTimeoutSec: '300'
-
   - task: PublishCodeCoverageResults@1
     displayName: 'Publish code coverage report'
     inputs:
@@ -102,6 +96,10 @@ steps:
       PathtoPublish: $(Build.SourcesDirectory)/src/dist
       ArtifactName: drop
       publishLocation: Container
+
+  - task: SonarCloudPublish@1
+    inputs:
+      pollingTimeoutSec: '300'
 
   - task: Bash@3
     displayName: 'Build and package the CLI'
