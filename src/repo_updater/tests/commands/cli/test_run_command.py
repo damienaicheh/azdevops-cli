@@ -101,13 +101,21 @@ class TestRunCommand(unittest.TestCase):
        obj = {}
        actual = os.getcwd()
        excepted = self.command.get_output(obj)
-       self.assertEqual( actual, excepted)
+       self.assertEqual(actual, excepted)
 
     def test_should_be_output_from_cli(self):
        obj = {'output': os.path.join(os.getcwd(),'../') }
        actual = os.path.join(os.getcwd(),'../')
        excepted = self.command.get_output(obj)
-       self.assertEqual( actual, excepted)
+       self.assertEqual(actual, excepted)
+
+    @patch('os.path.isdir')
+    def test_should_be_output_relatif_from_cli(self, mock_isdir) -> None:
+       mock_isdir.return_value = True
+       obj = {'output': 'aa/bb' }
+       actual = os.path.join(os.getcwd(),'aa/bb')
+       excepted = self.command.get_output(obj)
+       self.assertEqual(actual, excepted)
 
     def test_should_be_output_throw_exception_not_valid(self):
         with self.assertRaises(RepoUpdaterException) as ex:

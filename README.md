@@ -4,10 +4,10 @@
 
 ## I.Continuous integration
 
-| Branch                      |  Build | Quality Gate |
-|-----------------------------|--------|--------------|
-| main                        |[![Build Status](https://dev.azure.com/damienaicheh0990/azdevops-cli/_apis/build/status/damienaicheh.azdevops-cli?branchName=main)](https://dev.azure.com/damienaicheh0990/azdevops-cli/_build/latest?definitionId=95&branchName=main)| [![Quality Gate Status]([![Quality gate](https://sonarcloud.io/api/project_badges/quality_gate?project=damienaicheh_azdev-cli)](https://sonarcloud.io/summary/new_code?id=damienaicheh_azdev-cli) |
-| develop                     | [![Build Status](https://dev.azure.com/damienaicheh0990/azdevops-cli/_apis/build/status/damienaicheh.azdevops-cli?branchName=develop)](https://dev.azure.com/damienaicheh0990/azdevops-cli/_build/latest?definitionId=95&branchName=develop)| | 
+| Branch  | Build                                                                                                                                                                                                                                        | Quality Gate                                                                                                                                                                                      |
+| ------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| main    | [![Build Status](https://dev.azure.com/damienaicheh0990/azdevops-cli/_apis/build/status/damienaicheh.azdevops-cli?branchName=main)](https://dev.azure.com/damienaicheh0990/azdevops-cli/_build/latest?definitionId=95&branchName=main)       | [![Quality Gate Status]([![Quality gate](https://sonarcloud.io/api/project_badges/quality_gate?project=damienaicheh_azdev-cli)](https://sonarcloud.io/summary/new_code?id=damienaicheh_azdev-cli) |
+| develop | [![Build Status](https://dev.azure.com/damienaicheh0990/azdevops-cli/_apis/build/status/damienaicheh.azdevops-cli?branchName=develop)](https://dev.azure.com/damienaicheh0990/azdevops-cli/_build/latest?definitionId=95&branchName=develop) |                                                                                                                                                                                                   |
 
 ## II.Introduction
 
@@ -67,4 +67,24 @@ azdevops repo-updater run --configuration-file <path-to>/config.yml -o <output-p
 
 ```
 azdevops release-manager changelog -p <your-project-path> -o <output-path>
+```
+
+## VII - Unit tests
+
+### Run unit tests:
+
+```
+python3 -m unittest
+```
+
+or
+
+```
+coverage run -m unittest discover
+```
+
+### Generate covrage locally
+
+```
+coverage report
 ```

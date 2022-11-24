@@ -14,7 +14,7 @@ setup (
         "Programming Language :: Python",
         "Development Status :: 1 - Planning",
         "Operating System :: OS Independent",
-        "Programming Language :: Python :: 3.11.0"
+        "Programming Language :: Python :: 3.8.0"
     ],
     install_requires = [
         'certifi==2022.9.24',
