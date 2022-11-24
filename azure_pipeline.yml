@@ -50,7 +50,6 @@ steps:
         sonar.exclusions=**/*.bin
         sonar.python.coverage.reportPath=$(Build.SourcesDirectory)/src/coverage.xml
 
-
   - task: Bash@3
     displayName: 'Unit tests and coverage'
     inputs:
@@ -73,6 +72,8 @@ steps:
       sourcedirs: '$(Build.SourcesDirectory)/src'
       verbosity: 'Verbose'
       historydir: '$(codecoveragehistory.directory)'
+
+  - task: SonarCloudAnalyze@1
 
   - task: SonarCloudPublish@1
     inputs:
