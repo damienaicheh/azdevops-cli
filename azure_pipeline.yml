@@ -47,7 +47,6 @@ steps:
       cliProjectVersion: '$(Build.BuildId)'
       cliSources: '$(Build.SourcesDirectory)/src'
       extraProperties: |
-        sonar.exclusions=**/*.bin
         sonar.python.coverage.reportPath=$(Build.SourcesDirectory)/src/coverage.xml
 
   - task: Bash@3
