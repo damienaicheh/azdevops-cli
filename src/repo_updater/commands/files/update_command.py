@@ -29,9 +29,9 @@ class UpdateFileCommand(FileCommand):
                             flags = re.IGNORECASE if file.ignore_case else 0
                             regex_result = re.search(file.pattern, line, flags)
                             if regex_result and regex_result.group('content') != None:
-                                result+=line.replace(regex_result.group('content'), file.replace)
+                                result += line.replace(regex_result.group('content'), file.replace)
                             else:
-                                result+=line
+                                result += line
                         write_file.write(result)
                         if line.strip() != result.strip():
                             self.logger.debug(' line {} : {} -> {}'.format(nb_line, line.strip(), result.strip()))

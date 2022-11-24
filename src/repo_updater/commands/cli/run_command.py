@@ -8,25 +8,20 @@ import sys
 import yaml
 from git import Repo
 from base.commands.cli.cli_command import CliCommand
-
 from models.azure_devops_credentials import AzureDevOpsCredentials
-from models.repository import Repository
-from models.configuration import (
-    Action,
-    Configuration
-)
 
 from helpers.azure_devops import (
-    configuration_from_dict,
     create_pull_request,
     get_repositories_to_process,
     commit_and_push_changes
 )
 
 from repo_updater.commands.files.catalog import get_catalog
-
 from repo_updater.exceptions.repo_updater_exception import RepoUpdaterException
 from repo_updater.commands.files.file_command_args import FileCommandArgs
+from cerberus import Validator
+from repo_updater.schema import Schema
+from models.helper import dic2object
 
 class RunCommand(CliCommand):
 
@@ -88,16 +83,20 @@ class RunCommand(CliCommand):
             raise RepoUpdaterException(f'The Output directory {result} is not valid.')
         return result
     
-    def load_configuration(self, configuration_file: str) -> Configuration:
+    def load_configuration(self, configuration_file: str):
         """Load the configuration from the YAML file"""
         with open(configuration_file, 'r') as file:
             self.logger.info('Load configuration...')
-            yaml_configuration = yaml.load(file, Loader=yaml.FullLoader)
-            configuration = configuration_from_dict(yaml_configuration)
+            document = yaml.load(file, Loader=yaml.FullLoader)
+            v = Validator(Schema)
+            if not v.validate(document):
+                raise ValueError('')
+            configuration = dic2object(document)
+            print(configuration)
             self.logger.debug(configuration.project.name)
             return configuration
 
-    def build_command_args(self, assets_directory: str, output: str, repository: Repository, action: Action)-> FileCommandArgs:
+    def build_command_args(self, assets_directory: str, output: str, repository, action)-> FileCommandArgs:
         """Get file command args"""
         assert_absolute_path = assets_directory
         if not os.path.isabs(assets_directory):

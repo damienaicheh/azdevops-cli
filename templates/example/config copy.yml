@@ -6,18 +6,29 @@ pull_request:
 repository:
   default_branch: develop
   pattern: ^aa_infra_bb$
-  ignore_case: true 
+  ignore_case: true # default to false
+assets_directory: ''
 actions:
+  - name: delete
+    files: 
+      - name: README.md
+      - name: rg.tf
+        path: 'infrastructure-live'
   - name: add
+    files: 
+      - name: UPDATE.md
+      - name: UPDATE copy.md
+        path: 'env-vars'
+        override: false
+  - name: update
     files:
       - name: azure_pipeline.yml
         pattern: (?P<content>common.versions.primary.shares)
-        value: common.versions.secondary.shares
+        replace: common.versions.secondary.shares
       - name: azure_pipeline.yml
         pattern: :\s+[\"|']?(?P<content>frc)[\"|']?
-        value: en
+        replace: en
       - name: azure_pipeline.yml
         pattern: :\s+[\"|']?(?P<content>dev)[\"|']?
-        search: replace
         ignore_case: true # default to false
-        value: val
+        replace: val

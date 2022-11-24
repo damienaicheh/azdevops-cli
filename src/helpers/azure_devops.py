@@ -1,23 +1,10 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-
 import base64
 import json
 import re
 from models.azure_devops_credentials import AzureDevOpsCredentials
+from models.helper import dic2object
 from requests import request
-from models.configuration import (
-    Configuration,
-    List,
-    PullRequest,
-    configuration_from_dict
-)
 from logging import Logger
-
-from models.repository import (
-    Repository,
-    repository_from_dict
-)
 
 def call_api(azure_devops_creds: AzureDevOpsCredentials, method: str, path: str, body = None) -> str:
     """Generic method to do api calls to the API"""
@@ -37,19 +24,18 @@ def call_api(azure_devops_creds: AzureDevOpsCredentials, method: str, path: str,
 
     return response.text
 
-def get_repositories_to_process(azure_devops_creds: AzureDevOpsCredentials, configuration: Configuration) -> List[Repository]:
+def get_repositories_to_process(azure_devops_creds: AzureDevOpsCredentials, configuration):
     """Get all repositories from the project and filter them to find the list of them to edit"""
+    result = []
     repositories_result = call_api(azure_devops_creds, 'GET', f'/{configuration.project.name}/_apis/git/repositories?api-version=6.0')
-    repositories = list[Repository]()
-    for repository in json.loads(repositories_result)['value']:
-        repository_model = repository_from_dict(repository)
+    for item in json.loads(repositories_result)['value']:
+        repository =  dic2object(item)
         flags = re.IGNORECASE if configuration.repository.ignore_case else 0
-        if re.match(configuration.repository.pattern, repository_model.name, flags):
-            repositories.append(repository_model)
+        if re.match(configuration.repository.pattern, repository.name, flags):
+            result.append(repository)
+    return result
 
-    return repositories
-
-def create_pull_request(azure_devops_creds: AzureDevOpsCredentials, repository: Repository, configuration: Configuration):
+def create_pull_request(azure_devops_creds: AzureDevOpsCredentials, repository, configuration):
     """Create a pull request for a specific repository"""
     body = {
         'sourceRefName': f'refs/heads/{configuration.pull_request.branch}',
@@ -58,7 +44,7 @@ def create_pull_request(azure_devops_creds: AzureDevOpsCredentials, repository: 
     }
     call_api(azure_devops_creds, 'POST', f"/{configuration.project.name}/_apis/git/repositories/{repository.id}/pullrequests?api-version=6.0", body)
 
-def commit_and_push_changes(git_client, pull_request: PullRequest, logger: Logger) -> None:
+def commit_and_push_changes(git_client, pull_request, logger: Logger) -> None:
     """Commit and push changes on the repository"""
     current = git_client.create_head(pull_request.branch)
     current.checkout()
