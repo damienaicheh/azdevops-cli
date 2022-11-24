@@ -66,7 +66,6 @@ steps:
           exit 1
         fi
         coverage xml
-
   - task: reportgenerator@5
     displayName: 'Generate code coverage report'
     inputs:
