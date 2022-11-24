@@ -39,19 +39,19 @@ steps:
         pip install --target="./.python_packages/lib/site-packages" -r requirements.txt
         pip install -r requirements.txt
       
-  - task: SonarCloudPrepare@1
-    inputs:
-      SonarCloud: 'damienaicheh-sonar'
-      organization: 'damienaicheh'
-      scannerMode: 'CLI'
-      configMode: 'manual'
-      cliProjectKey: 'damienaicheh_azdevops-cli'
-      cliProjectName: 'azdevops-cli'
-      cliProjectVersion: '$(Build.BuildId)'
-      cliSources: '$(Build.SourcesDirectory)/src'
-      extraProperties: |
-        sonar.python.coverage.reportPath=$(Build.SourcesDirectory)/src/coverage.xml
-        sonar.scanner.metadataFilePath=$(Build.SourcesDirectory)/src/report-task.txt
+  # - task: SonarCloudPrepare@1
+  #   inputs:
+  #     SonarCloud: 'damienaicheh-sonar'
+  #     organization: 'damienaicheh'
+  #     scannerMode: 'CLI'
+  #     configMode: 'manual'
+  #     cliProjectKey: 'damienaicheh_azdevops-cli'
+  #     cliProjectName: 'azdevops-cli'
+  #     cliProjectVersion: '$(Build.BuildId)'
+  #     cliSources: '$(Build.SourcesDirectory)/src'
+  #     extraProperties: |
+  #       sonar.python.coverage.reportPath=$(Build.SourcesDirectory)/src/coverage.xml
+  #       sonar.scanner.metadataFilePath=$(Build.SourcesDirectory)/src/report-task.txt
 
   - task: Bash@3
     displayName: 'Unit tests and coverage'
@@ -93,11 +93,11 @@ steps:
         pip install build
         python -m build
 
-  - task: SonarCloudAnalyze@1
-  
-  - task: SonarCloudPublish@1
-    inputs:
-      pollingTimeoutSec: '300'
+  # - task: SonarCloudAnalyze@1
+
+  # - task: SonarCloudPublish@1
+  #   inputs:
+  #     pollingTimeoutSec: '300'
 
   - task: PublishBuildArtifacts@1
     displayName: 'Publish artifact'
