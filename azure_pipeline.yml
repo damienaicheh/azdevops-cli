@@ -84,18 +84,6 @@ steps:
       reportDirectory: '$(Build.SourcesDirectory)/codecoverage'
 
   - task: Bash@3
-    displayName: 'Unit tests and coverage'
-    inputs:
-      targetType: 'inline'
-      workingDirectory: $(Build.SourcesDirectory)/src
-      script: |
-        ls -al
- 
-  - task: SonarCloudPublish@1
-    inputs:
-      pollingTimeoutSec: '300'
-
-  - task: Bash@3
     displayName: 'Build and package the CLI'
     inputs:
       targetType: 'inline'
@@ -104,6 +92,10 @@ steps:
         source .venv/bin/activate
         pip install build
         python -m build
+
+  - task: SonarCloudPublish@1
+    inputs:
+      pollingTimeoutSec: '300'
 
   - task: PublishBuildArtifacts@1
     displayName: 'Publish artifact'
