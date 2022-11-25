@@ -1,34 +1,53 @@
 project:
-  name: My Project
+  name: rsql4net
 pull_request:
   name: 'feat(1234): Update variable group to use last version'
   branch: 'features/add_missing_elements_42'
+assets_directory: ../templates/example
 repository:
-  default_branch: develop
-  pattern: ^aa_infra_bb$
-  ignore_case: true # default to false
-assets_directory: ''
+  default_branch: main
+  pattern: 
+    regex: ^myproject$
+    ignore_case: true 
 actions:
-  - name: delete
-    files: 
-      - name: README.md
-      - name: rg.tf
-        path: 'infrastructure-live'
-  - name: add
-    files: 
-      - name: UPDATE.md
-      - name: UPDATE copy.md
-        path: 'env-vars'
-        override: false
-  - name: update
-    files:
-      - name: azure_pipeline.yml
-        pattern: (?P<content>common.versions.primary.shares)
-        replace: common.versions.secondary.shares
-      - name: azure_pipeline.yml
-        pattern: :\s+[\"|']?(?P<content>frc)[\"|']?
-        replace: en
-      - name: azure_pipeline.yml
-        pattern: :\s+[\"|']?(?P<content>dev)[\"|']?
-        ignore_case: true # default to false
-        replace: val
+  - add:
+      target_path: azure_pipeline.yml
+      override: true
+      asset_path: azure_pipeline.yml
+  - update:
+      target_path: azure_pipeline.yml
+      pattern:
+        regex: '^-\sgroup:\sazdevops\.cli\.vars$'
+      mode: after
+      value: '- group: monsupergroup'
+  - update:
+      target_path: azure_pipeline.yml
+      pattern:
+        regex: '^-\sgroup:\sazdevops\.cli\.vars$'
+      mode: before
+      value: '- group: monsupergroup-tmp'
+  - update:
+      target_path: azure_pipeline.yml
+      mode: end
+      value: |
+        # <!-- BEGIN_TATTOO -->
+        #
+        # Copyright 2022 - damienaicheh 
+        # project: azdevops-cli
+        #
+        # <!-- END_TATTOO -->
+  - add:
+      target_path: test2/
+      override: true
+      asset_path: test/
+  - delete:
+      target_path: test2/
+  - add:
+      target_path: test/
+      override: true
+      asset_path: test/
+  #- delete:
+  #    target_path: azure_pipeline.yml
+
+
+      

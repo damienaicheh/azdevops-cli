@@ -3,10 +3,8 @@
 
 import click
 from release_manager.cli import release_manager
-from repos_updater.cli import repo_updater
-from repos_updater.commands.cli.run_command import RunCommand
+from repo_updater.cli import repo_updater
 from base.commands.cli.version_command import VersionCommand
-from release_manager.commands.cli.changelog_command import ChangeLogCommand
 from helpers.logger import create_logger
 
 @click.group()

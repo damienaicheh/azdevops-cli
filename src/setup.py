@@ -14,9 +14,10 @@ setup (
         "Programming Language :: Python",
         "Development Status :: 1 - Planning",
         "Operating System :: OS Independent",
-        "Programming Language :: Python :: 3.11.0"
+        "Programming Language :: Python :: 3.8.0"
     ],
     install_requires = [
+        'Cerberus==1.3.4',
         'certifi==2022.9.24',
         'charset-normalizer==2.1.1',
         'click==8.1.3',
@@ -26,7 +27,7 @@ setup (
         'PyYAML==6.0',
         'requests==2.28.1',
         'smmap==5.0.0',
-        'urllib3==1.26.12'
+        'urllib3==1.26.12',
     ],
     packages = find_packages(exclude=["tests/*"]),
     scripts = [

@@ -1,11 +1,20 @@
-# AzDev CLI
+# AzDevOps CLI
 
-## I.Introduction
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://github.com/gwendallg/rsql4net/blob/develop/LICENSE) [![Pypi](https://img.shields.io/pypi/v/PACKAGE?label=azdevops-cli)]()
+
+## I.Continuous integration
+
+| Branch  | Build                                                                                                                                                                                                                                        | Quality Gate                                                                                                                                                                                      |
+| ------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| main    | [![Build Status](https://dev.azure.com/damienaicheh0990/azdevops-cli/_apis/build/status/damienaicheh.azdevops-cli?branchName=main)](https://dev.azure.com/damienaicheh0990/azdevops-cli/_build/latest?definitionId=95&branchName=main)       | |
+| develop | [![Build Status](https://dev.azure.com/damienaicheh0990/azdevops-cli/_apis/build/status/damienaicheh.azdevops-cli?branchName=develop)](https://dev.azure.com/damienaicheh0990/azdevops-cli/_build/latest?definitionId=95&branchName=develop) |                                                                                                                                                                                                   |
+
+## II.Introduction
 
 This project is used to update all selected repositories in one single script define by a `config.yml` file.
 The python script will automatically clone the repositories, modify it and propose a pull request on each repository inside Azure DevOps.
 
-## II. Getting Started
+## III. Getting Started
 
 Create a dev environment for the project:
 
@@ -34,7 +43,7 @@ Export credentials as environment variable to be able to run the API calls:
 export AZURE_DEVOPS_PAT='<your_email>:<your_pat>'
 ```
 
-## III - Models generation
+## IV - Models generation
 
 Transform the `config.yml` into json with this website for instance:
 https://jsonformatter.org/yaml-to-json
@@ -44,13 +53,13 @@ https://app.quicktype.io/
 
 Choose default settings with the Python language.
 
-## IV - Install locally for testing only
+## V - Install locally for testing only
 
 ```
 python3 -m pip install --editable .
 ```
 
-## V - Run the CLI
+## VI - Run the CLI
 
 ```
 azdevops repo-updater run --configuration-file <path-to>/config.yml -o <output-path>
@@ -58,4 +67,24 @@ azdevops repo-updater run --configuration-file <path-to>/config.yml -o <output-p
 
 ```
 azdevops release-manager changelog -p <your-project-path> -o <output-path>
+```
+
+## VII - Unit tests
+
+### Run unit tests:
+
+```
+python3 -m unittest
+```
+
+or
+
+```
+coverage run -m unittest discover
+```
+
+### Generate covrage locally
+
+```
+coverage report
 ```
