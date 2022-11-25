@@ -17,7 +17,7 @@ from repo_updater.commands.files.file_command_args import FileCommandArgs
 from cerberus import Validator
 from repo_updater.schema import Schema
 from models.helper import dic2object
-
+import shutil
 class RunCommand(CliCommand):
 
     def __init__(self, logger):
@@ -98,14 +98,16 @@ class RunCommand(CliCommand):
 
     def build_command_args(self, configuration, output, repository, action) -> FileCommandArgs:
         """Get file command args"""
-        assert_absolute_path = configuration.assets_directory
-        if not os.path.isabs(configuration.assets_directory):
-            assert_absolute_path = os.path.join(os.getcwd(), configuration.assets_directory)
+        assets_directory = configuration.assets_directory
+        if not assets_directory:
+            assets_directory = os.getcwd()
+        if not os.path.isabs(assets_directory):
+            assets_directory = os.path.join(os.getcwd(), assets_directory)
         return  FileCommandArgs(
-            assets_directory = assert_absolute_path,
+            assets_directory = assets_directory,
             output = output,
             repository = repository,
-            file = action.files
+            action = action
         )
 
     def _on_execute(self, obj):
@@ -117,14 +119,22 @@ class RunCommand(CliCommand):
             output = self.get_output(obj)
             azure_devops_creds = AzureDevOpsCredentials(organization_url, pat_token)
             configuration = self.load_configuration(configuration_file)
-            command_catalog = get_catalog()
+            command_catalog = get_catalog(self.logger)
         
             for repository in get_repositories_to_process(azure_devops_creds, configuration):
+                to_path = os.path.join(output, repository.name)
+                if os.path.exists(to_path):
+                    shutil.rmtree(to_path)
                 # For each repository apply all actions 
-                git_client = Repo.clone_from(repository.remote_url, to_path=os.path.join(output, repository.name), branch= configuration.repository.default_branch)
+                git_client = Repo.clone_from(repository.remoteUrl, to_path=os.path.join(output, repository.name), branch= configuration.repository.default_branch)
                 for action in configuration.actions:
-                    args = self.build_command_args(configuration.assets_directory, output, repository, action)
-                    command_catalog[action.name].execute(args)
+                    args = self.build_command_args(configuration, output, repository, action)
+                    if hasattr(action, 'add'):
+                        command_catalog['add'].execute(args)
+                    elif hasattr(action, 'delete'):
+                        command_catalog['delete'].execute(args)
+                    else:
+                        command_catalog['update'].execute(args)
                 if not dry_run:
                     # commit and push source on new branch
                     commit_and_push_changes(git_client, configuration.pull_request, self.logger)

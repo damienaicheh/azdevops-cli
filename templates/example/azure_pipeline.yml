@@ -1,0 +1,129 @@
+name: azdevops_cli
+
+trigger:
+- develop
+- main
+- features/*
+- hotfixes/*
+- bugfixes/*
+- releases/*
+- support/*
+
+pool:
+  vmImage: 'Ubuntu-20.04'
+
+variables:
+- group: azdevops.cli.vars
+
+steps:
+  
+  - checkout: self
+  
+  - task: UsePythonVersion@0
+    displayName: 'Use python 3.8'
+    inputs:
+      versionSpec: '3.8'
+      addToPath: true
+      architecture: 'x64'
+  
+  - task: Bash@3
+    displayName: 'Install application dependencies'
+    inputs:
+      targetType: 'inline'
+      workingDirectory: $(Build.SourcesDirectory)/src
+      script: |
+        set -x
+        python3 -m venv .venv
+        source .venv/bin/activate
+        python3 -m pip install --upgrade pip
+        pip install --target="./.python_packages/lib/site-packages" -r requirements.txt
+        pip install -r requirements.txt
+      
+  # - task: SonarCloudPrepare@1
+  #   inputs:
+  #     SonarCloud: 'damienaicheh-sonar'
+  #     organization: 'damienaicheh'
+  #     scannerMode: 'CLI'
+  #     configMode: 'manual'
+  #     cliProjectKey: 'damienaicheh_azdevops-cli'
+  #     cliProjectName: 'azdevops-cli'
+  #     cliProjectVersion: '$(Build.BuildId)'
+  #     cliSources: '$(Build.SourcesDirectory)/src'
+  #     extraProperties: |
+  #       sonar.python.coverage.reportPath=$(Build.SourcesDirectory)/src/coverage.xml
+  #       sonar.scanner.metadataFilePath=$(Build.SourcesDirectory)/src/report-task.txt
+
+  - task: Bash@3
+    displayName: 'Unit tests and coverage'
+    inputs:
+      targetType: 'inline'
+      workingDirectory: $(Build.SourcesDirectory)/src
+      script: |
+        set -x
+        source .venv/bin/activate
+        coverage run -m unittest discover
+        if [ $? != 0 ] ; then
+          exit 1
+        fi
+        coverage xml
+  
+  - task: reportgenerator@5
+    displayName: 'Generate code coverage report'
+    inputs:
+      reports: '$(Build.SourcesDirectory)/src/coverage.xml'
+      targetdir: '$(Build.SourcesDirectory)/codecoverage'
+      sourcedirs: '$(Build.SourcesDirectory)/src'
+      verbosity: 'Verbose'
+      historydir: '$(codecoveragehistory.directory)'
+
+  - task: PublishCodeCoverageResults@1
+    displayName: 'Publish code coverage report'
+    inputs:
+      codeCoverageTool: Cobertura
+      summaryFileLocation: '$(Build.SourcesDirectory)/src/coverage.xml'
+      reportDirectory: '$(Build.SourcesDirectory)/codecoverage'
+
+  - task: Bash@3
+    displayName: 'Build and package the CLI'
+    inputs:
+      targetType: 'inline'
+      workingDirectory: $(Build.SourcesDirectory)/src
+      script: |
+        source .venv/bin/activate
+        pip install build
+        python -m build
+
+  # - task: SonarCloudAnalyze@1
+
+  # - task: SonarCloudPublish@1
+  #   inputs:
+  #     pollingTimeoutSec: '300'
+
+  - task: PublishBuildArtifacts@1
+    displayName: 'Publish artifact'
+    inputs:
+      PathtoPublish: $(Build.SourcesDirectory)/src/dist
+      ArtifactName: drop
+      publishLocation: Container
+
+  - task: Bash@3
+    displayName: 'Build and package the CLI'
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+    inputs:
+      targetType: 'inline'
+      script: |
+        pip install twine
+
+  - task: TwineAuthenticate@1
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+    inputs:
+      pythonUploadServiceConnection: 'AzDevOpsCliServiceConnection'
+      
+  - task: Bash@3
+    displayName: 'Upload to Pypi'
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+    inputs:
+      targetType: 'inline'
+      workingDirectory: $(Build.SourcesDirectory)/src
+      script: |
+        python3 -m twine upload --skip-existing --verbose --repository azdevops-cli --config-file $(PYPIRC_PATH) dist/*.whl

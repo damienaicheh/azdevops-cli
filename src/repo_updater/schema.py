@@ -1,3 +1,75 @@
+Add = {
+    'type': 'dict',
+    'schema': {
+        'add': {
+            'type': 'dict',
+            'schema': {
+                'asset_path' : {
+                    'required': True,
+                    'type': 'string',
+                },
+                'target_path' : {
+                    'required': True,
+                    'type': 'string',
+                },
+                'ignore_case' :{
+                    'type': 'boolean'
+                }
+            }
+        }
+    }
+}
+
+Delete = {
+    'type': 'dict',
+    'schema': {
+        'delete': {
+            'type': 'dict',
+            'schema': {
+                'source_path' : {
+                    'required': True,
+                    'type': 'string',
+                }
+            }
+        }
+    }
+}
+
+Update = {
+    'type': 'dict',
+    'schema': {
+        'update': {
+            'type': 'dict',
+            'schema': {
+                'target_path' : {
+                    'required': True,
+                    'type': 'string',
+                },
+                'pattern': {
+                    'type': 'dict',
+                    'schema': {
+                        'regex' :{
+                            'required': True,
+                            'type': 'string'
+                        },
+                        'ignore_case' :{
+                            'type': 'boolean'
+                        }
+                    }
+                },
+                'mode' : {
+                    'regex': '^(add|update|delete|begin|end)$',
+                    'type': 'string',
+                },
+                'value' : {
+                    'required': True,
+                    'type': 'string',
+                }
+            }
+        }
+    }
+}
+
 Schema = {
     'project': {
         'required': True,
@@ -6,8 +78,7 @@ Schema = {
         'schema': {
             'name' :{
                 'required': True,
-                'type': 'string',
-                'maxlength': 254
+                'type': 'string'
             }
         }
     },
@@ -18,13 +89,11 @@ Schema = {
         'schema': {
             'name' :{
                 'required': True,
-                'type': 'string',
-                'maxlength': 254
+                'type': 'string'
             },
             'branch' :{
                 'required': True,
-                'type': 'string',
-                'maxlength': 254
+                'type': 'string'
             }
         }
     },
@@ -36,17 +105,19 @@ Schema = {
             'default_branch' :{
                 'required': True,
                 'empty': False,
-                'type': 'string',
-                'maxlength': 254
+                'type': 'string'
             },
-            'pattern' :{
-                'required': True,
-                'empty': False,
-                'type': 'string',
-                'maxlength': 254
-            },
-            'ignore_case' :{
-                'type': 'boolean'
+            'pattern': {
+                'type': 'dict',
+                'schema': {
+                    'regex' :{
+                        'required': True,
+                        'type': 'string'
+                    },
+                    'ignore_case' :{
+                        'type': 'boolean'
+                    }
+                }
             }
         }
     },
@@ -57,44 +128,10 @@ Schema = {
     'actions': {
         'required': True,
         'type': 'list',
-        'schema': {
-            'type': 'dict', 
-            'schema': {
-                'name' : {
-                    'regex': '^(add|update|delete)$',
-                    'required': True,
-                    'type': 'string'
-                },
-                'files': {
-                    'required': True,
-                    'type': 'list',
-                    'schema': {
-                        'type': 'dict', 
-                        'schema': {
-                            'name' : {
-                                'required': True,
-                                'type': 'string',
-                                'maxlength': 254
-                            },
-                            'pattern' : {
-                                'type': 'string',
-                                'maxlength': 254
-                            },
-                            'search' : {
-                                'regex': '^(before|after|replace)$',
-                                'type': 'string'
-                            },
-                            'value' : {
-                                'type': 'string',
-                                'required': True,
-                            },
-                            'ignore_case' : {
-                                'type': 'boolean'
-                            }
-                        }
-                    }
-                }
-            }
-        }
+        'anyof_schema': [
+            Add, 
+            Delete,
+            Update
+        ]
     }
 }

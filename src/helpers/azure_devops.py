@@ -30,8 +30,10 @@ def get_repositories_to_process(azure_devops_creds: AzureDevOpsCredentials, conf
     repositories_result = call_api(azure_devops_creds, 'GET', f'/{configuration.project.name}/_apis/git/repositories?api-version=6.0')
     for item in json.loads(repositories_result)['value']:
         repository =  dic2object(item)
-        flags = re.IGNORECASE if configuration.repository.ignore_case else 0
-        if re.match(configuration.repository.pattern, repository.name, flags):
+        flags = 0
+        if hasattr(configuration.repository, 'ignore_case'):
+            flags = re.IGNORECASE if configuration.repository.ignore_case else 0
+        if re.match(configuration.repository.pattern.regex, repository.name, flags):
             result.append(repository)
     return result
 
