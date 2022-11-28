@@ -58,6 +58,13 @@ steps:
         pip install --target="./.python_packages/lib/site-packages" -r requirements.txt
         pip install -r requirements.txt
       
+  - task: Bash@3
+    displayName: 'Update pipeline build number'
+    inputs:
+      targetType: "inline"
+      script: |
+        echo "##vso[build.updatebuildnumber]$GITVERSION_LEGACYSEMVER"
+
   # - task: SonarCloudPrepare@1
   #   inputs:
   #     SonarCloud: 'damienaicheh-sonar'
@@ -126,7 +133,29 @@ steps:
       publishLocation: Container
 
   - task: Bash@3
-    displayName: 'Build and package the CLI'
+    displayName: 'Tag version'
+    inputs:
+      targetType: 'inline'
+      scripts: |
+        #!/usr/bin/env bash
+        set -x 
+        git config --global user.name $GITTAGUSERNAME
+        git config --global user.email $GITTAGUSEREMAIL
+        git tag -a $BUILD_BUILDNUMBER $GITVERSION_SHORTSHA -m "$GITTAGMESSAGE"
+        git push origin $BUILD_BUILDNUMBER
+    # condition: |
+    #   and(
+    #     succeeded(),  
+    #     eq(variables['Build.Reason'], 'IndividualCI'),
+    #     or(
+    #       eq(variables['Build.SourceBranch'], 'refs/heads/main'),
+    #       startsWith(variables['Build.SourceBranch'], 'refs/heads/releases'),
+    #       startsWith(variables['Build.SourceBranch'], 'refs/heads/support')
+    #     )
+    #   )
+
+  - task: Bash@3
+    displayName: 'Prepare to package the CLI'
     condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
     inputs:
       targetType: 'inline'
