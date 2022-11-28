@@ -31,7 +31,7 @@ steps:
     inputs:
       targetType: inline
       script: |
-        python3 $SYSTEM_DEFAULTWORKINGDIRECTORY/scripts/set-cli-version.py -f $(Build.SourcesDirectory)/src/pyproject.toml
+        python3 $(Build.SourcesDirectory)/scripts/set-cli-version.py -f $(Build.SourcesDirectory)/src/pyproject.toml
 
   - task: Bash@3
     displayName: 'Install application dependencies'
