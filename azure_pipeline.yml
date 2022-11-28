@@ -57,14 +57,7 @@ steps:
         python3 -m pip install --upgrade pip
         pip install --target="./.python_packages/lib/site-packages" -r requirements.txt
         pip install -r requirements.txt
-      
-  - task: Bash@3
-    displayName: 'Update pipeline build number'
-    inputs:
-      targetType: "inline"
-      script: |
-        echo "##vso[build.updatebuildnumber]$GITVERSION_LEGACYSEMVER"
-
+    
   # - task: SonarCloudPrepare@1
   #   inputs:
   #     SonarCloud: 'damienaicheh-sonar'
@@ -136,7 +129,7 @@ steps:
     displayName: 'Tag version'
     inputs:
       targetType: 'inline'
-      scripts: |
+      script: |
         #!/usr/bin/env bash
         set -x 
         git config --global user.name $GITTAGUSERNAME
