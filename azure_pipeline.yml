@@ -18,6 +18,17 @@ variables:
 steps:
   
   - checkout: self
+
+  - task: gitversion/setup@0
+    displayName: 'Install GitVersion $(GitVersion)'
+    inputs:
+      versionSpec: '$(GitVersion)'
+
+  - task: gitversion/execute@0
+    displayName: 'Calculate SemVer'
+    inputs:
+      useConfigFile: true
+      configFilePath: .gitversion.yml
   
   - task: UsePythonVersion@0
     displayName: 'Use python 3.8'
@@ -32,6 +43,7 @@ steps:
       targetType: inline
       script: |
         python3 $(Build.SourcesDirectory)/scripts/set-cli-version.py -f $(Build.SourcesDirectory)/src/pyproject.toml
+        cat $(Build.SourcesDirectory)/src/pyproject.toml
 
   - task: Bash@3
     displayName: 'Install application dependencies'
