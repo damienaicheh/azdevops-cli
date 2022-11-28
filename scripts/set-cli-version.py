@@ -15,7 +15,7 @@ def main(file):
         with open(path_file, 'r') as read_file:
             with open(tmp_path_file, 'w') as write_file:
                 lines = read_file.read()
-                new_lines = re.sub(regex, f"version = \"{os.getenv('GITVERSION_LEGACYSEMVER')}\"", lines, flags=re.MULTILINE)
+                new_lines = re.sub(regex, f"version = \"{os.getenv('GITVERSION_MAJORMINORPATCH')}\"", lines, flags=re.MULTILINE)
                 write_file.write(new_lines)
             os.remove(path_file)
             os.rename(tmp_path_file, path_file)
