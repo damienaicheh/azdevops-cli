@@ -137,35 +137,62 @@ steps:
         git config --global user.email $GITTAGUSEREMAIL
         git tag -a $BUILD_BUILDNUMBER $GITVERSION_SHORTSHA -m "$GITTAGMESSAGE"
         git push origin $BUILD_BUILDNUMBER
-    # condition: |
-    #   and(
-    #     succeeded(),  
-    #     eq(variables['Build.Reason'], 'IndividualCI'),
-    #     or(
-    #       eq(variables['Build.SourceBranch'], 'refs/heads/main'),
-    #       startsWith(variables['Build.SourceBranch'], 'refs/heads/releases'),
-    #       startsWith(variables['Build.SourceBranch'], 'refs/heads/support')
-    #     )
-    #   )
+    condition: |
+      and(
+        succeeded(),  
+        eq(variables['Build.Reason'], 'IndividualCI'),
+        or(
+          eq(variables['Build.SourceBranch'], 'refs/heads/main'),
+          startsWith(variables['Build.SourceBranch'], 'refs/heads/releases'),
+          startsWith(variables['Build.SourceBranch'], 'refs/heads/support')
+        )
+      )
 
   - task: Bash@3
     displayName: 'Prepare to package the CLI'
-    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
     inputs:
       targetType: 'inline'
       script: |
         pip install twine
+    condition: |
+      and(
+        succeeded(),  
+        eq(variables['Build.Reason'], 'IndividualCI'),
+        or(
+          eq(variables['Build.SourceBranch'], 'refs/heads/main'),
+          startsWith(variables['Build.SourceBranch'], 'refs/heads/releases'),
+          startsWith(variables['Build.SourceBranch'], 'refs/heads/support')
+        )
+      )
 
   - task: TwineAuthenticate@1
-    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
     inputs:
       pythonUploadServiceConnection: 'AzDevOpsCliServiceConnection'
+    condition: |
+      and(
+        succeeded(),  
+        eq(variables['Build.Reason'], 'IndividualCI'),
+        or(
+          eq(variables['Build.SourceBranch'], 'refs/heads/main'),
+          startsWith(variables['Build.SourceBranch'], 'refs/heads/releases'),
+          startsWith(variables['Build.SourceBranch'], 'refs/heads/support')
+        )
+      )
       
   - task: Bash@3
     displayName: 'Upload to Pypi'
-    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
     inputs:
       targetType: 'inline'
       workingDirectory: $(Build.SourcesDirectory)/src
       script: |
         python3 -m twine upload --skip-existing --verbose --repository azdevops-cli --config-file $(PYPIRC_PATH) dist/*.whl
+    condition: |
+      and(
+        succeeded(),  
+        eq(variables['Build.Reason'], 'IndividualCI'),
+        or(
+          eq(variables['Build.SourceBranch'], 'refs/heads/main'),
+          startsWith(variables['Build.SourceBranch'], 'refs/heads/releases'),
+          startsWith(variables['Build.SourceBranch'], 'refs/heads/support')
+        )
+      )
