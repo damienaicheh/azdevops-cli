@@ -76,7 +76,7 @@ steps:
     inputs:
       reports: '$(Build.SourcesDirectory)/coverage.xml'
       targetdir: '$(Build.SourcesDirectory)/codecoverage'
-      sourcedirs: '$(Build.SourcesDirectory)/src'
+      sourcedirs: '$(Build.SourcesDirectory)'
       verbosity: 'Verbose'
       historydir: '$(codecoveragehistory.directory)'
 
@@ -91,7 +91,6 @@ steps:
     displayName: 'Build and package the CLI'
     inputs:
       targetType: 'inline'
-      workingDirectory: $(Build.SourcesDirectory)/src
       script: |
         source .venv/bin/activate
         pip install build
@@ -100,7 +99,7 @@ steps:
   - task: PublishBuildArtifacts@1
     displayName: 'Publish artifact'
     inputs:
-      PathtoPublish: $(Build.SourcesDirectory)/src/dist
+      PathtoPublish: $(Build.SourcesDirectory)/dist
       ArtifactName: drop
       publishLocation: Container
 
@@ -161,9 +160,8 @@ steps:
     displayName: 'Upload to Pypi'
     inputs:
       targetType: 'inline'
-      workingDirectory: $(Build.SourcesDirectory)/src
       script: |
-        python3 -m twine upload --skip-existing --verbose --repository azdevops-cli --config-file $(PYPIRC_PATH) dist/*.whl
+        python3 -m twine upload --skip-existing --verbose --repository azdevops-cli --config-file $(PYPIRC_PATH) $(Build.SourcesDirectory)/dist/*.whl
     condition: |
       and(
         succeeded(),  
