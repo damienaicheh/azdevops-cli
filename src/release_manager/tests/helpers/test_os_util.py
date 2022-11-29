@@ -2,7 +2,7 @@ import os
 import unittest
 from unittest.mock import patch
 
-from src.exceptions.azdevops_exception import AzDevOpsException
+from src.release_manager.exceptions.release_manager_exception import ReleaseManagerException
 from src.release_manager.helpers.os_util import get_valid_folder_path
 
 class TestOsUtil(unittest.TestCase):
