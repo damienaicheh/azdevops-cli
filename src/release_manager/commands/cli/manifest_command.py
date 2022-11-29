@@ -1,12 +1,9 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-
 import traceback
 import sys
-from base.commands.cli.cli_command import CliCommand
-from release_manager.helpers.manifest_generator import generate_manifest
-from release_manager.exceptions.release_manager_exception import ReleaseManagerException
-from release_manager.helpers.os_util import get_valid_folder_path
+from src.base.commands.cli.cli_command import CliCommand
+from src.release_manager.helpers.manifest_generator import generate_manifest
+from src.release_manager.exceptions.release_manager_exception import ReleaseManagerException
+from src.release_manager.helpers.os_util import get_valid_folder_path
 
 class ManifestCommand(CliCommand):
 
