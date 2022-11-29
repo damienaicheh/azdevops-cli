@@ -1,6 +1,7 @@
 import git
 import os
 import re
+from typing import List
 
 regex_type = '(?P<type>(feat|fix|feat!|refactor|chore)):'
 regex_commit = '\s+(?P<type>(.*?):)?(?P<message>(.*))\|(?P<date>.*)'
@@ -31,25 +32,24 @@ def add_to_dict(commits_filtered: dict, key: str, value: str) -> dict:
 
     return commits_filtered
 
-def process_commits(lines: list[str]) -> dict:
+def process_commits(lines: List[str]) -> dict:
     commits_filtered = {}
     for line in lines:
         regex_result = re.search(regex_type, line)
         if regex_result != None:
             commit_type = regex_result.group('type')
-            match commit_type:
-                case 'feat':
-                    commits_filtered = add_to_dict(commits_filtered, 'Features', line)
-                case 'fix':
-                    commits_filtered = add_to_dict(commits_filtered, 'Fixes', line)
-                case 'feat!':
-                    commits_filtered = add_to_dict(commits_filtered, 'Breaking Changes', line)
-                case 'docs':
-                    commits_filtered = add_to_dict(commits_filtered, 'Docs', line)
-                case 'chore':
-                    commits_filtered = add_to_dict(commits_filtered, 'Chore', line)   
-                case _:
-                    commits_filtered = add_to_dict(commits_filtered, 'Others', line)
+            if (commit_type == 'feat'):
+                commits_filtered = add_to_dict(commits_filtered, 'Features', line)
+            elif (commit_type == 'fix'):        
+                commits_filtered = add_to_dict(commits_filtered, 'Fixes', line)
+            elif (commit_type == 'feat!'):        
+                commits_filtered = add_to_dict(commits_filtered, 'Breaking Changes', line)
+            elif (commit_type == 'docs'):        
+                commits_filtered = add_to_dict(commits_filtered, 'Docs', line)
+            elif (commit_type == 'chore'):        
+                commits_filtered = add_to_dict(commits_filtered, 'Chore', line)   
+            else:
+                commits_filtered = add_to_dict(commits_filtered, 'Others', line)
         else:
             commits_filtered = add_to_dict(commits_filtered, 'Others', line)
     

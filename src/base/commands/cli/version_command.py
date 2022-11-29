@@ -1,4 +1,3 @@
-
 from src.base.commands.cli.cli_command import CliCommand
 from src.models.version_infos import VersionInfos
 

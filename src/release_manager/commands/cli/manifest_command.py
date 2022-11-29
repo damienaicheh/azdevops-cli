@@ -1,6 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-
 import traceback
 import sys
 from src.base.commands.cli.cli_command import CliCommand

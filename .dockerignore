@@ -5,6 +5,7 @@
 **/.env
 **/.git
 **/.gitignore
+**/.gitversion.yml
 **/.project
 **/.settings
 **/.toolstarget
@@ -13,7 +14,6 @@
 **/*.*proj.user
 **/*.dbmdl
 **/*.jfm
-**/bin
 **/charts
 **/docker-compose*
 **/compose*
@@ -24,3 +24,7 @@
 **/secrets.dev.yaml
 **/values.dev.yaml
 README.md
+**/templates
+LICENSE
+**/*.egg-info
+**/build
