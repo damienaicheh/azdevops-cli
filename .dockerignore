@@ -28,3 +28,4 @@ README.md
 LICENSE
 **/*.egg-info
 **/build
+**/dist
