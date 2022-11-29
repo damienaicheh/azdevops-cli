@@ -1,6 +1,5 @@
 import click
 from src.release_manager.cli import release_manager
-from src.repo_updater.cli import repo_updater
 from src.base.commands.cli.version_command import VersionCommand
 from src.helpers.logger import create_logger
 
@@ -9,7 +8,6 @@ def main():
     """Welcome to the Azure DevOps CLI"""
 
 main.add_command(release_manager)
-main.add_command(repo_updater)
 
 if __name__ == '__main__':
     main()
