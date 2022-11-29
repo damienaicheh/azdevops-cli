@@ -2,7 +2,7 @@ import os
 import unittest
 from unittest.mock import patch
 
-from src.exceptions.azdevops_exception import AzDevOpsException
+from src.release_manager.exceptions.release_manager_exception import ReleaseManagerException
 from src.release_manager.helpers.os_util import get_valid_folder_path
 
 class TestOsUtil(unittest.TestCase):
@@ -28,7 +28,7 @@ class TestOsUtil(unittest.TestCase):
        self.assertEqual(actual, excepted)
 
     def test_should_be_path_throw_exception_not_valid(self) -> None:
-        with self.assertRaises(AzDevOpsException) as ex:
+        with self.assertRaises(ReleaseManagerException) as ex:
             obj = {'path': os.path.join(os.getcwd(),'../a') }
             get_valid_folder_path(obj, 'path')
         self.assertTrue('not valid' in ex.exception.message)
