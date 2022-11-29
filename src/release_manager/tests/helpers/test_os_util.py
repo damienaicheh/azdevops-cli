@@ -27,7 +27,9 @@ class TestOsUtil(unittest.TestCase):
        excepted = get_valid_folder_path(obj, 'path')
        self.assertEqual(actual, excepted)
 
-    def test_should_be_path_throw_exception_not_valid(self) -> None:
+    @patch('os.path.isdir')
+    def test_should_be_path_throw_exception_not_valid(self, mock_isdir) -> None:
+        mock_isdir.return_value = False
         with self.assertRaises(ReleaseManagerException) as ex:
             obj = {'path': os.path.join(os.getcwd(),'../a') }
             get_valid_folder_path(obj, 'path')
