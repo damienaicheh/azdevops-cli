@@ -30,6 +30,19 @@ steps:
     inputs:
       useConfigFile: true
       configFilePath: .gitversion.yml
+
+  - task: Bash@3
+    displayName: 'Docker build'
+    inputs:
+      targetType: inline
+      script: |
+        docker buildx build --output "type=image,push=false" --platform linux/amd64 \
+                            --build-arg VERSION=$SEMVER \
+                            --build-arg BUILD_DATE=$(date -u +'%Y-%m-%dT%H:%M:%SZ') \
+                            --build-arg VCS_REF=$SHORTSHA \
+                            --tag aichehda/azdevops-cli:$SEMVER \
+                            --tag aichehda/azdevops-cli:latest \
+                            --file ./Dockerfile .
   
   - task: UsePythonVersion@0
     displayName: 'Use python 3.8'
