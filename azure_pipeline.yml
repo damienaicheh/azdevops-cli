@@ -134,16 +134,16 @@ steps:
     env:
       DOCKER_USERNAME: $(DockerUsername)
       DOCKER_PASSWORD: $(DockerPassword)  
-    # condition: |
-    #   and(
-    #     succeeded(),  
-    #     eq(variables['Build.Reason'], 'IndividualCI'),
-    #     or(
-    #       eq(variables['Build.SourceBranch'], 'refs/heads/main'),
-    #       startsWith(variables['Build.SourceBranch'], 'refs/heads/releases'),
-    #       startsWith(variables['Build.SourceBranch'], 'refs/heads/support')
-    #     )
-    #   )
+    condition: |
+      and(
+        succeeded(),  
+        eq(variables['Build.Reason'], 'IndividualCI'),
+        or(
+          eq(variables['Build.SourceBranch'], 'refs/heads/main'),
+          startsWith(variables['Build.SourceBranch'], 'refs/heads/releases'),
+          startsWith(variables['Build.SourceBranch'], 'refs/heads/support')
+        )
+      )
   
   - task: Bash@3
     displayName: 'Docker build'
@@ -159,16 +159,16 @@ steps:
                             --file ./Dockerfile .
     env:
       DOCKER_IMAGE_NAME: $(DockerImageName)
-    # condition: |
-    #   and(
-    #     succeeded(),  
-    #     eq(variables['Build.Reason'], 'IndividualCI'),
-    #     or(
-    #       eq(variables['Build.SourceBranch'], 'refs/heads/main'),
-    #       startsWith(variables['Build.SourceBranch'], 'refs/heads/releases'),
-    #       startsWith(variables['Build.SourceBranch'], 'refs/heads/support')
-    #     )
-    #   )
+    condition: |
+      and(
+        succeeded(),  
+        eq(variables['Build.Reason'], 'IndividualCI'),
+        or(
+          eq(variables['Build.SourceBranch'], 'refs/heads/main'),
+          startsWith(variables['Build.SourceBranch'], 'refs/heads/releases'),
+          startsWith(variables['Build.SourceBranch'], 'refs/heads/support')
+        )
+      )
 
   - task: Bash@3
     displayName: 'Docker logout'
@@ -176,16 +176,16 @@ steps:
       targetType: inline
       script: |
         docker logout
-    # condition: |
-    #   and(
-    #     succeeded(),  
-    #     eq(variables['Build.Reason'], 'IndividualCI'),
-    #     or(
-    #       eq(variables['Build.SourceBranch'], 'refs/heads/main'),
-    #       startsWith(variables['Build.SourceBranch'], 'refs/heads/releases'),
-    #       startsWith(variables['Build.SourceBranch'], 'refs/heads/support')
-    #     )
-    #   )
+    condition: |
+      and(
+        succeeded(),  
+        eq(variables['Build.Reason'], 'IndividualCI'),
+        or(
+          eq(variables['Build.SourceBranch'], 'refs/heads/main'),
+          startsWith(variables['Build.SourceBranch'], 'refs/heads/releases'),
+          startsWith(variables['Build.SourceBranch'], 'refs/heads/support')
+        )
+      )
 
   - task: Bash@3
     displayName: 'Prepare to package the CLI'
