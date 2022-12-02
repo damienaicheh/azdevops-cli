@@ -31,38 +31,6 @@ steps:
       useConfigFile: true
       configFilePath: .gitversion.yml
 
-  - task: Bash@3
-    displayName: 'Docker login'
-    inputs:
-      targetType: inline
-      script: |
-        echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_USERNAME" --password-stdin 
-    env:
-      DOCKER_USERNAME: $(DockerUsername)
-      DOCKER_PASSWORD: $(DockerPassword)  
-  
-  - task: Bash@3
-    displayName: 'Docker build'
-    inputs:
-      targetType: inline
-      script: |
-        docker buildx build --output "type=image,push=true" --platform linux/amd64 \
-                            --build-arg VERSION=$SEMVER \
-                            --build-arg BUILD_DATE=$(date -u +'%Y-%m-%dT%H:%M:%SZ') \
-                            --build-arg VCS_REF=$SHORTSHA \
-                            --tag $DOCKER_IMAGE_NAME:$SEMVER \
-                            --tag $DOCKER_IMAGE_NAME:latest \
-                            --file ./Dockerfile .
-    env:
-      DOCKER_IMAGE_NAME: $(DockerImageName)
-
-  - task: Bash@3
-    displayName: 'Docker logout'
-    inputs:
-      targetType: inline
-      script: |
-        docker logout
-
   - task: UsePythonVersion@0
     displayName: 'Use python 3.8'
     inputs:
@@ -146,6 +114,68 @@ steps:
         git config --global user.email $GITTAGUSEREMAIL
         git tag -a $BUILD_BUILDNUMBER $GITVERSION_SHORTSHA -m "$GITTAGMESSAGE"
         git push origin $BUILD_BUILDNUMBER
+    condition: |
+      and(
+        succeeded(),  
+        eq(variables['Build.Reason'], 'IndividualCI'),
+        or(
+          eq(variables['Build.SourceBranch'], 'refs/heads/main'),
+          startsWith(variables['Build.SourceBranch'], 'refs/heads/releases'),
+          startsWith(variables['Build.SourceBranch'], 'refs/heads/support')
+        )
+      )
+
+  - task: Bash@3
+    displayName: 'Docker login'
+    inputs:
+      targetType: inline
+      script: |
+        echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_USERNAME" --password-stdin 
+    env:
+      DOCKER_USERNAME: $(DockerUsername)
+      DOCKER_PASSWORD: $(DockerPassword)  
+    condition: |
+      and(
+        succeeded(),  
+        eq(variables['Build.Reason'], 'IndividualCI'),
+        or(
+          eq(variables['Build.SourceBranch'], 'refs/heads/main'),
+          startsWith(variables['Build.SourceBranch'], 'refs/heads/releases'),
+          startsWith(variables['Build.SourceBranch'], 'refs/heads/support')
+        )
+      )
+  
+  - task: Bash@3
+    displayName: 'Docker build'
+    inputs:
+      targetType: inline
+      script: |
+        docker buildx build --output "type=image,push=true" --platform linux/amd64 \
+                            --build-arg VERSION=$SEMVER \
+                            --build-arg BUILD_DATE=$(date -u +'%Y-%m-%dT%H:%M:%SZ') \
+                            --build-arg VCS_REF=$SHORTSHA \
+                            --tag $DOCKER_IMAGE_NAME:$SEMVER \
+                            --tag $DOCKER_IMAGE_NAME:latest \
+                            --file ./Dockerfile .
+    env:
+      DOCKER_IMAGE_NAME: $(DockerImageName)
+    condition: |
+      and(
+        succeeded(),  
+        eq(variables['Build.Reason'], 'IndividualCI'),
+        or(
+          eq(variables['Build.SourceBranch'], 'refs/heads/main'),
+          startsWith(variables['Build.SourceBranch'], 'refs/heads/releases'),
+          startsWith(variables['Build.SourceBranch'], 'refs/heads/support')
+        )
+      )
+
+  - task: Bash@3
+    displayName: 'Docker logout'
+    inputs:
+      targetType: inline
+      script: |
+        docker logout
     condition: |
       and(
         succeeded(),  
