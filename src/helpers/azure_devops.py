@@ -6,6 +6,7 @@ from logging import Logger
 from git import Repo
 from requests import request
 from src.models.azure_devops_credentials import AzureDevOpsCredentials
+from src.models.azure_devops_definition import AzureDevOpsDefinition
 from src.exceptions.azdevops_exception import AzDevOpsException
 from src.models.helper import dic2object
 
@@ -92,3 +93,24 @@ def get_credentials() -> AzureDevOpsCredentials:
         organization_url = organization_url,
         pat_token = personal_access_token
     )
+
+def get_release_definitions_by_project(azure_devops_creds: AzureDevOpsCredentials, project_name: str):
+    """Get release definitions by project"""
+    json_release_definitions = call_api(azure_devops_creds, 'GET', f'/{project_name}/_apis/release/definitions?api-version=7.0')
+    result = []
+    for item in json.loads(json_release_definitions)['value']:
+        definition =  dic2object(item)
+        result.append(AzureDevOpsDefinition(definition.id, definition.name))
+    return result
+
+def get_release_by_definition(azure_devops_creds: AzureDevOpsCredentials, project_name: str, definition_id):
+    """Get release by definition"""
+    json_release = call_api(azure_devops_creds, 'GET', f'/{project_name}/_apis/release/definitions/{definition_id}?api-version=7.0')
+    release = dic2object(json.loads(json_release))
+    return release
+
+def get_release_by_id(azure_devops_creds: AzureDevOpsCredentials, project_name: str, release_id):
+    """Get release defail by id"""
+    json_release_detail = call_api(azure_devops_creds, 'GET', f'/{project_name}/_apis/release/releases/{release_id}?api-version=7.0')
+    release_detail = dic2object(json.loads(json_release_detail))
+    return release_detail
