@@ -55,6 +55,7 @@ def generate_markdown(output: str, releases_infos: List):
 def generate_summary(azure_devops_creds: AzureDevOpsCredentials, project_name: str, output: str):
     """Generate releases summary and export it as a Markdown file"""
     release_definitions = get_release_definitions_by_project(azure_devops_creds, project_name)
+    release_definitions.sort(key=lambda r: r.name)
     releases_infos = []
     for release_definition in release_definitions:
         # Get the global informations for a release by definition
