@@ -23,14 +23,14 @@ def generate_row(element: str, index: int, maxColumn: int) -> str:
     return line
 
 def format_artifact(artifacts: List) -> str: 
-    """Format the artifacts to put all oof them in the same cell"""
+    """Format the artifacts to put all of them in the same cell"""
     lines = ''
     for artifact in artifacts:
         lines += f' {artifact.name} : {artifact.version} </br>'
     return lines
 
 def generate_environment_row(environments: List) -> str:
-    """Generate the environment row with the artifacts associated"""
+    """Generate the environment row with the artifacts associated to it"""
     header_lines = '||'
     artifacts_lines = '||'
     for env in environments:
