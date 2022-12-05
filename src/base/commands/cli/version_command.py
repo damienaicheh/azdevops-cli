@@ -1,8 +1,6 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 
-from base.commands.cli.cli_command import CliCommand
-from models.version_infos import VersionInfos
+from src.base.commands.cli.cli_command import CliCommand
+from src.models.version_infos import VersionInfos
 
 class VersionCommand(CliCommand):
 

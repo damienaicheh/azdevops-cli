@@ -2,8 +2,8 @@ import os
 import unittest
 from unittest.mock import Mock 
 from unittest.mock import patch 
-from repo_updater.commands.cli.run_command import RunCommand
-from repo_updater.exceptions.repo_updater_exception import RepoUpdaterException
+from src.repo_updater.commands.cli.run_command import RunCommand
+from src.repo_updater.exceptions.repo_updater_exception import RepoUpdaterException
 
 class TestRunCommand(unittest.TestCase):
 
@@ -21,7 +21,7 @@ class TestRunCommand(unittest.TestCase):
         actual = self.command.get_dry_run(obj)
         self.assertFalse(actual)
     
-    @patch.dict(os.environ, {'AZDEVOPS_CONFIGURATION_PATH': '../templates/example/config.yml'}, clear=True)
+    @patch.dict(os.environ, {'AZDEVOPS_CONFIGURATION_PATH': 'templates/example/config.yml'}, clear=True)
     def test_should_be_configuration_file_from_environment(self):
         obj = {}
         expected = self.command.get_configuration_path_file(obj)
@@ -29,7 +29,7 @@ class TestRunCommand(unittest.TestCase):
         self.assertEqual(expected, actual)
 
     def test_should_be_configuration_file_from_cli(self):
-        obj = {'configuration_file' : '../templates/example/config.yml'}
+        obj = {'configuration_file' : 'templates/example/config.yml'}
         expected = self.command.get_configuration_path_file(obj)
         actual = os.path.join(os.getcwd(), obj['configuration_file'])
         self.assertEqual(expected, actual)
@@ -42,61 +42,17 @@ class TestRunCommand(unittest.TestCase):
 
     def test_should_be_configuration_file_throw_exception_not_found(self):
         with self.assertRaises(RepoUpdaterException) as ex:
-            obj = {'configuration_file' : '../templates/example/config2.yml'}
+            obj = {'configuration_file' : 'templates/example/config2.yml'}
             self.command.get_configuration_path_file(obj)
         self.assertTrue('not found' in ex.exception.message)
 
     def test_should_be_configuration_file_throw_exception_not_valid(self):
         with self.assertRaises(RepoUpdaterException) as ex:
-            obj = {'configuration_file' : '../templates/example'}
+            obj = {'configuration_file' : 'templates/example'}
             self.command.get_configuration_path_file(obj)
         self.assertTrue('not valid' in ex.exception.message)
 
-    @patch.dict(os.environ, {'AZDEVOPS_ORGANIZATION_URL': 'https://dev.azure.com/damienaicheh0990/'}, clear=True)
-    def test_should_be_organization_url_from_environment(self):
-        obj = {}
-        expected = self.command.get_organization_url(obj)
-        actual = 'https://dev.azure.com/damienaicheh0990/'
-        self.assertEqual(expected, actual)
-
-    def test_should_be_organization_url_from_cli(self):
-        obj = { 'organization_url': 'https://damienaicheh0990.visualstudio.com/' }
-        expected = self.command.get_organization_url(obj)
-        actual = 'https://damienaicheh0990.visualstudio.com/'
-        self.assertEqual(expected, actual)
-    
-    def test_should_be_organization_url_throw_exception_is_required(self):
-        with self.assertRaises(RepoUpdaterException) as ex:
-            obj = {}
-            self.command.get_organization_url(obj)
-        self.assertTrue('is required' in ex.exception.message)
-
-    @patch.dict(os.environ, {'AZDEVOPS_ORGANIZATION_URL': 'https://www.google.fr'}, clear=True)
-    def test_should_be_organization_url_throw_exception_not_valid(self):
-        with self.assertRaises(RepoUpdaterException) as ex:
-            obj = {}
-            self.command.get_organization_url(obj)
-        self.assertTrue('not valid' in ex.exception.message)
-
-    @patch.dict(os.environ, {'AZDEVOPS_PAT_TOKEN': 'azertyuio'}, clear=True)
-    def test_should_be_pat_token_from_environment(self):
-        obj = {}
-        expected = self.command.get_pat_token(obj)
-        actual = 'azertyuio'
-        self.assertEqual(expected, actual)
-
-    def test_should_be_pat_token_from_cli(self):
-        obj = { 'pat_token': 'azertyuio' }
-        expected = self.command.get_pat_token(obj)
-        actual = 'azertyuio'
-        self.assertEqual(expected, actual)
-    
-    def test_should_be_pat_token_throw_exception_is_required(self):
-        with self.assertRaises(RepoUpdaterException) as ex:
-            obj = {}
-            self.command.get_pat_token(obj)
-        self.assertTrue('is required' in ex.exception.message)
-        
+       
     def test_should_be_output_default(self):
        obj = {}
        actual = os.getcwd()
@@ -104,16 +60,16 @@ class TestRunCommand(unittest.TestCase):
        self.assertEqual(actual, excepted)
 
     def test_should_be_output_from_cli(self):
-       obj = {'output': os.path.join(os.getcwd(),'../') }
-       actual = os.path.join(os.getcwd(),'../')
+       obj = {'output': os.path.join(os.getcwd()) }
+       actual = os.path.join(os.getcwd())
        excepted = self.command.get_output(obj)
        self.assertEqual(actual, excepted)
 
     @patch('os.path.isdir')
     def test_should_be_output_relatif_from_cli(self, mock_isdir) -> None:
        mock_isdir.return_value = True
-       obj = {'output': 'aa/bb' }
-       actual = os.path.join(os.getcwd(),'aa/bb')
+       obj = {'output': 'tmp/aa/bb' }
+       actual = os.path.join(os.getcwd(),'tmp/aa/bb')
        excepted = self.command.get_output(obj)
        self.assertEqual(actual, excepted)
 
@@ -132,19 +88,19 @@ class TestRunCommand(unittest.TestCase):
         self.assertTrue('not valid' in ex.exception.message)
 
     def test_should_be_load_configuration_valid(self):
-        obj = {'configuration_file' : 'repo_updater/tests/commands/cli/valid.yml'}
+        obj = {'configuration_file' : 'src/repo_updater/tests/commands/cli/valid.yml'}
         configuration_file = self.command.get_configuration_path_file(obj)
         expected = self.command.load_configuration(configuration_file)
         self.assertTrue(len(expected.actions)>0)
 
     def test_should_be_load_configuration_invalid_format(self):
-        obj = {'configuration_file' : 'repo_updater/tests/commands/cli/test_run_command.py'}
+        obj = {'configuration_file' : 'src/repo_updater/tests/commands/cli/test_run_command.py'}
         with self.assertRaises(RepoUpdaterException) as ex:
             self.command.load_configuration(obj)
         self.assertTrue('don\'t have a valid format.' in ex.exception.message)
 
     def test_should_be_load_configuration_invalid_schema(self):
-        obj = {'configuration_file' : 'repo_updater/tests/commands/cli/invalid.yml'}
+        obj = {'configuration_file' : 'src/repo_updater/tests/commands/cli/invalid.yml'}
         with self.assertRaises(RepoUpdaterException) as ex:
             self.command.load_configuration(obj)
         self.assertTrue("don't have a valid format." in ex.exception.message)

@@ -1,9 +1,9 @@
 
 import unittest
 from unittest.mock import Mock 
-from repo_updater.commands.files.catalog import get_catalog
+from src.repo_updater.commands.files.helper import get_catalog
 
-class TestCatalog(unittest.TestCase):
+class TestHelper(unittest.TestCase):
 
     def setUp(self) -> None:
         self.logger = Mock()

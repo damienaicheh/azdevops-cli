@@ -1,8 +1,8 @@
 import unittest
 from unittest.mock import Mock
 
-from release_manager.commands.cli.manifest_command import ManifestCommand
-from release_manager.exceptions.release_manager_exception import ReleaseManagerException
+from src.release_manager.commands.cli.manifest_command import ManifestCommand
+from src.release_manager.exceptions.release_manager_exception import ReleaseManagerException
 
 class TestManifestCommand(unittest.TestCase):
 

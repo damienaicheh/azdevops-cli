@@ -1,4 +1,4 @@
-from exceptions.azdevops_exception import AzDevOpsException
+from src.exceptions.azdevops_exception import AzDevOpsException
 
 class ReleaseManagerException(AzDevOpsException):
 

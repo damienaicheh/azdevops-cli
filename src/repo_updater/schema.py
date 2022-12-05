@@ -58,7 +58,7 @@ Update = {
                     }
                 },
                 'mode' : {
-                    'regex': '^(add|update|delete|begin|end)$',
+                    'regex': '^(insert-before|insert-after|replace-with|delete|at-beginning|at-the-end)$',
                     'type': 'string',
                 },
                 'value' : {
@@ -79,7 +79,7 @@ Schema = {
             'name' :{
                 'required': True,
                 'type': 'string'
-            }
+            },
         }
     },
     'pull_request': {
