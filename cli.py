@@ -2,10 +2,10 @@
 # -*- coding: utf-8 -*-
 
 import click
-from release_manager.cli import release_manager
-from repo_updater.cli import repo_updater
-from base.commands.cli.version_command import VersionCommand
-from helpers.logger import create_logger
+from src.release_manager.cli import release_manager
+from src.repo_updater.cli import repo_updater
+from src.base.commands.cli.version_command import VersionCommand
+from src.helpers.logger import create_logger
 
 @click.group()
 def main():

@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
-from models.version_infos import VersionInfos
-
+from src.models.version_infos import VersionInfos
 from setuptools import setup, find_packages
 
 version_infos = VersionInfos()

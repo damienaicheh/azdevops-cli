@@ -3,21 +3,24 @@ import re
 import traceback
 import sys
 import yaml
-from git import Repo
-from base.commands.cli.cli_command import CliCommand
-from models.azure_devops_credentials import AzureDevOpsCredentials
-from helpers.azure_devops import (
-    create_pull_request,
-    get_repositories_to_process,
-    commit_and_push_changes
-)
-from repo_updater.commands.files.catalog import get_catalog
-from repo_updater.exceptions.repo_updater_exception import RepoUpdaterException
-from repo_updater.commands.files.file_command_args import FileCommandArgs
 from cerberus import Validator
-from repo_updater.schema import Schema
-from models.helper import dic2object
 import shutil
+
+from src.base.commands.cli.cli_command import CliCommand
+from src.repo_updater.commands.files.helper import get_catalog
+from src.repo_updater.exceptions.repo_updater_exception import RepoUpdaterException
+from src.repo_updater.commands.files.file_command_args import FileCommandArgs
+from src.repo_updater.schema import Schema
+from src.models.helper import dic2object
+from src.models.azure_devops_credentials import AzureDevOpsCredentials
+from src.helpers.azure_devops import (
+    get_repositories,
+    clone_repository,
+    commit_and_push_changes,
+    create_pull_request,
+    get_credentials
+)
+
 class RunCommand(CliCommand):
 
     def __init__(self, logger):
@@ -38,27 +41,6 @@ class RunCommand(CliCommand):
         if not os.path.isfile(result):
             raise RepoUpdaterException(f'The configuration file \'{result}\' is not valid.')
         return result
-    
-    def get_organization_url(self, obj) -> str:
-        """Define the Azure DevOps organization Url see : https://learn.microsoft.com/en-us/azure/devops/extend/develop/work-with-urls?view=azure-devops&tabs=http"""
-        result = os.getenv('AZDEVOPS_ORGANIZATION_URL')
-        if 'organization_url' in obj:
-            result = obj['organization_url']
-        if not result or result.strip() == '':
-            raise RepoUpdaterException('The organization URL is required.')
-        pattern = '^https:\/\/(dev\.azure\.com\/(?P<org1>[^\/]+)|(?P<org2>[^\.]+)\.visualstudio\.com)(\/)?$'
-        if not re.match(pattern, result):
-            raise RepoUpdaterException(f'The organization URL {result} is not valid. see https://learn.microsoft.com/en-us/azure/devops/extend/develop/work-with-urls?view=azure-devops&tabs=http')
-        return result
-    
-    def get_pat_token(self, obj) -> str:
-        """Define the Azure DevOps PAT token"""
-        result = os.getenv('AZDEVOPS_PAT_TOKEN')
-        if 'pat_token' in obj:
-            result = obj['pat_token']
-        if not result or result.strip() == '':
-            raise RepoUpdaterException('The PAT Token is required.')
-        return result
 
     def get_dry_run(self, obj) -> bool:
         """Define the flag 'dry run'"""
@@ -74,6 +56,8 @@ class RunCommand(CliCommand):
             result = obj['output']
         if not os.path.isabs(result):
             result = os.path.join(os.getcwd(), result)
+        if not os.path.exists(result):
+            os.makedirs(result)
         if not os.path.isdir(result):
             raise RepoUpdaterException(f'The Output directory {result} is not valid.')
         return result
@@ -110,23 +94,31 @@ class RunCommand(CliCommand):
             action = action
         )
 
+    def get_repositories(self, configuration, credential: AzureDevOpsCredentials):
+        result = []
+        for repository in get_repositories(credential, configuration.project.name):
+            flags = 0
+            if hasattr(configuration.repository, 'ignore_case'):
+                flags = re.IGNORECASE if configuration.repository.ignore_case else 0
+            if re.match(configuration.repository.pattern.regex, repository.name, flags):
+                result.append(repository)
+        return result
+
     def _on_execute(self, obj):
         try:
             dry_run = self.get_dry_run(obj)
             configuration_file = self.get_configuration_path_file(obj)
-            organization_url = self.get_organization_url(obj)
-            pat_token = self.get_pat_token(obj)
             output = self.get_output(obj)
-            azure_devops_creds = AzureDevOpsCredentials(organization_url, pat_token)
             configuration = self.load_configuration(configuration_file)
             command_catalog = get_catalog(self.logger)
-        
-            for repository in get_repositories_to_process(azure_devops_creds, configuration):
+            credential = get_credentials()
+
+            for repository in self.get_repositories(configuration, credential):
+                self.logger.info(f'Process {repository.name}')
                 to_path = os.path.join(output, repository.name)
                 if os.path.exists(to_path):
                     shutil.rmtree(to_path)
-                # For each repository apply all actions 
-                git_client = Repo.clone_from(repository.remoteUrl, to_path=os.path.join(output, repository.name), branch= configuration.repository.default_branch)
+                repo = clone_repository(credential, repository.remoteUrl, to_path, configuration.repository.default_branch)
                 for action in configuration.actions:
                     args = self.build_command_args(configuration, output, repository, action)
                     if hasattr(action, 'add'):
@@ -137,9 +129,9 @@ class RunCommand(CliCommand):
                         command_catalog['update'].execute(args)
                 if not dry_run:
                     # commit and push source on new branch
-                    commit_and_push_changes(git_client, configuration.pull_request, self.logger)
+                    commit_and_push_changes(repo, configuration.pull_request, self.logger)
                     # create a new pull request
-                    create_pull_request(azure_devops_creds, repository, configuration)
+                    create_pull_request(credential, repository, configuration)
         except:
             traceback.print_exc()
             sys.exit(1)

@@ -48,7 +48,7 @@ class UpdateFileCommand(FileCommand):
         mode = self.get_mode(args)
         pattern_regex = None
         pattern_ignore_case = 0
-        if mode != 'begin' and mode != 'end':
+        if mode != 'at-beginning' and mode != 'at-the-end':
             pattern_regex = self.get_pattern_regex(args)
             pattern_ignore_case = self.get_pattern_ignore_case(args)
         value = args.action.update.value
@@ -56,27 +56,27 @@ class UpdateFileCommand(FileCommand):
             with open(target_path, 'r') as read_file:
                 with open(target_path_tmp, 'w') as write_file:
                     result = ''
-                    if mode == 'begin':
+                    if mode == 'at-beginning':
                         result += value + '\n'
                     lines = read_file.readlines()
-                    nb_line = 1
+                    nb_line = 0
                     for line in lines:
+                        nb_line = nb_line + 1
                         regex_result = re.search(pattern_regex, line, pattern_ignore_case) if pattern_regex else None
                         if regex_result:
-                            if mode == 'after':
+                            if mode == 'delete':
+                                break
+                            if mode == 'insert-after':
                                 result += line
                                 result += value + '\n'
-                            elif mode == 'before':
+                            elif mode == 'insert-before':
                                 result += value + '\n'
                                 result += line
-                            elif regex_result.group('content'):
-                                result += line.replace(regex_result.group('content'), value) 
-                            if line.strip() != result.strip():
-                                self.logger.debug(' line {} : {} -> {}'.format(nb_line, line.strip(), result.strip()))
+                            elif mode == 'replace-with':
+                                result += line.replace(regex_result.group('replace'), value)
                         else:
                             result += line
-                        nb_line = nb_line + 1
-                    if mode == 'end':
+                    if mode == 'at-the-end':
                         result = result.strip()+ '\n' + value     
                     write_file.write(result.strip())
                 os.remove(target_path)

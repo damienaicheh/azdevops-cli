@@ -1,8 +1,6 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 
 import os
-from release_manager.exceptions.release_manager_exception import ReleaseManagerException
+from src.release_manager.exceptions.release_manager_exception import ReleaseManagerException
 
 def get_valid_folder_path(obj, key: str) -> str:
     """Define an absolute directory path"""

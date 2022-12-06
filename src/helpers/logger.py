@@ -1,11 +1,7 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-
 from http.client import HTTPConnection
 import logging
-from logging import Logger
 
-def create_logger(verbose: bool) -> Logger:
+def create_logger(verbose: bool) -> logging.Logger:
     logger = logging.getLogger('azdevops-cli')
     logger.setLevel(logging.INFO)
     formatter = None

@@ -1,10 +1,9 @@
-import os
 import unittest
 from unittest.mock import Mock 
-from repo_updater.commands.files.add_command import AddFileCommand
-from repo_updater.commands.files.file_command_args import FileCommandArgs
-from models.helper import dic2object
-from repo_updater.exceptions.repo_updater_exception import RepoUpdaterException
+from src.models.helper import dic2object
+from src.repo_updater.commands.files.add_file_command import AddFileCommand
+from src.repo_updater.commands.files.file_command_args import FileCommandArgs
+from src.repo_updater.exceptions.repo_updater_exception import RepoUpdaterException
 
 class TestAddFileCommand(unittest.TestCase):
 
@@ -12,7 +11,6 @@ class TestAddFileCommand(unittest.TestCase):
         self.logger = Mock()
         self.command = AddFileCommand(self.logger)
 
-    
     def test_should_be_get_asset_path_is_valid(self):
         action = {}
         action['add'] = {}

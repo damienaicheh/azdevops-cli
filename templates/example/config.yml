@@ -1,53 +1,19 @@
 project:
-  name: rsql4net
+  name: enigma-infrastructure
 pull_request:
-  name: 'feat(1234): Update variable group to use last version'
-  branch: 'features/add_missing_elements_42'
+  name: 'SCBE-XXXX: Update terraform provider versions'
+  branch: 'features/scbe-xxxx'
 assets_directory: ../templates/example
 repository:
-  default_branch: main
+  default_branch: develop
   pattern: 
-    regex: ^myproject$
-    ignore_case: true 
+    regex: ^enigma-infra-per-env-aks$
 actions:
-  - add:
-      target_path: azure_pipeline.yml
-      override: true
-      asset_path: azure_pipeline.yml
   - update:
       target_path: azure_pipeline.yml
+      mode: replace-with
       pattern:
-        regex: '^-\sgroup:\sazdevops\.cli\.vars$'
-      mode: after
-      value: '- group: monsupergroup'
-  - update:
-      target_path: azure_pipeline.yml
-      pattern:
-        regex: '^-\sgroup:\sazdevops\.cli\.vars$'
-      mode: before
-      value: '- group: monsupergroup-tmp'
-  - update:
-      target_path: azure_pipeline.yml
-      mode: end
-      value: |
-        # <!-- BEGIN_TATTOO -->
-        #
-        # Copyright 2022 - damienaicheh 
-        # project: azdevops-cli
-        #
-        # <!-- END_TATTOO -->
-  - add:
-      target_path: test2/
-      override: true
-      asset_path: test/
-  - delete:
-      target_path: test2/
-  - add:
-      target_path: test/
-      override: true
-      asset_path: test/
-  #- delete:
-  #    target_path: azure_pipeline.yml
-
-
+        regex: '^\s+-\sgroup:\senigma-infra-version-(?P<replace>[a-z]*)'
+      value: primary
+ 
       

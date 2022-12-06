@@ -1,10 +1,8 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 
 import click
-from release_manager.commands.cli.changelog_command import ChangeLogCommand
-from release_manager.commands.cli.manifest_command import ManifestCommand
-from helpers.logger import create_logger
+from src.release_manager.commands.cli.changelog_command import ChangeLogCommand
+from src.release_manager.commands.cli.manifest_command import ManifestCommand
+from src.helpers.logger import create_logger
 
 # Command Group
 @click.group(name='release-manager')

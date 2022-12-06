@@ -3,9 +3,9 @@
 
 import traceback
 import sys
-from base.commands.cli.cli_command import CliCommand
-from release_manager.helpers.changelog_generator import *
-from release_manager.helpers.os_util import get_valid_folder_path
+from src.base.commands.cli.cli_command import CliCommand
+from src.release_manager.helpers.changelog_generator import *
+from src.release_manager.helpers.os_util import get_valid_folder_path
 
 class ChangeLogCommand(CliCommand):
 
