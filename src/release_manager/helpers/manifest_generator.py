@@ -7,7 +7,7 @@ def generate_manifest(project_path: str, application_name: str, output: str):
     initial_commit = git_client.rev_parse('HEAD')
     lastest_tag = git_client.describe('--abbrev=0')
 
-    file = open(os.path.join(output, 'manifest.json'), 'a')
+    file = open(os.path.join(output, 'manifest.json'), 'w')
     file.truncate(0)
 
     manifest = {
