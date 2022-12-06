@@ -1,0 +1,14 @@
+project:
+  name: rsql4net
+pull_request:
+  name: 'feat(1234): Update variable group to use last version'
+  branch: 'features/add_missing_elements_42'
+assets_directory: ../templates/example
+repository:
+  default_branch: main
+  pattern: 
+    regex: ^myproject$
+    ignore_case: true 
+actions:
+  - add:
+      target_path: qsdsqd
