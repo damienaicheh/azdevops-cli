@@ -20,26 +20,4 @@ class TestManifestCommand(unittest.TestCase):
         with self.assertRaises(ReleaseManagerException) as ex:
             obj = {}
             self.command.get_application_name(obj)
-<<<<<<< HEAD
         self.assertTrue('required' in ex.exception.message)
-
-    def test_should_be_output_default(self) -> None:
-       obj = {}
-       actual = os.getcwd()
-       excepted = self.command.get_output(obj)
-       self.assertEqual(actual, excepted)
-
-    def test_should_be_output_from_cli(self) -> None:
-       obj = {'output': os.path.join(os.getcwd(),'../') }
-       actual = os.path.join(os.getcwd(),'../')
-       excepted = self.command.get_output(obj)
-       self.assertEqual(actual, excepted)
-
-    def test_should_be_output_throw_exception_not_valid(self) -> None:
-        with self.assertRaises(ReleaseManagerException) as ex:
-            obj = {'output': os.path.join(os.getcwd(),'../a') }
-            self.command.get_output(obj)
-        self.assertTrue('not valid' in ex.exception.message)
-=======
-        self.assertTrue('required' in ex.exception.message)
->>>>>>> bb6f874 (feat: Mutualize code and tests.)
