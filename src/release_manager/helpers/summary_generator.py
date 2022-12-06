@@ -43,14 +43,12 @@ def generate_environment_row(environments: List) -> str:
 
 def generate_markdown(output: str, releases_infos: List):
     """Generate markdown releases summary file"""
-    file = open(os.path.join(output, 'RELEASES_SUMMARY.md'), 'a')
-    file.truncate(0)
-    file.write(generate_row('Release Definition', 0, 4))
-    file.write('| - | - | - | - |\n')
-    for info in releases_infos:
-        file.write(generate_row(info.name, 0, 4))
-        file.write(generate_environment_row(info.environments))
-    file.close()
+    with open(os.path.join(output, 'RELEASES_SUMMARY.md'), 'w') as file:    
+        file.write(generate_row('Release Definition', 0, 4))
+        file.write('| - | - | - | - |\n')
+        for info in releases_infos:
+            file.write(generate_row(info.name, 0, 4))
+            file.write(generate_environment_row(info.environments))
 
 def generate_summary(azure_devops_creds: AzureDevOpsCredentials, project_name: str, output: str):
     """Generate releases summary and export it as a Markdown file"""
