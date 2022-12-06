@@ -52,7 +52,6 @@ class TestRunCommand(unittest.TestCase):
             self.command.get_configuration_path_file(obj)
         self.assertTrue('not valid' in ex.exception.message)
 
-       
     def test_should_be_output_default(self):
        obj = {}
        actual = os.getcwd()

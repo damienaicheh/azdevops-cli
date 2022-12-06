@@ -1,7 +1,7 @@
 from logging import Logger
 from abc import ABC, abstractmethod
 from src.repo_updater.commands.files.file_command_args import FileCommandArgs
-from src.repo_updater.exceptions.repo_updater_exception import RepoUpdaterException
+
 class FileCommand(ABC):
     def __init__(self, logger: Logger):
         self.logger = logger

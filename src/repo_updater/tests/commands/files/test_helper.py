@@ -1,4 +1,3 @@
-
 import unittest
 from unittest.mock import Mock 
 from src.repo_updater.commands.files.helper import get_catalog

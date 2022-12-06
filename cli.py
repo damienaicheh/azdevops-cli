@@ -9,6 +9,7 @@ def main():
     """Welcome to the Azure DevOps CLI"""
 
 main.add_command(release_manager)
+main.add_command(repo_updater)
 
 if __name__ == '__main__':
     main()
