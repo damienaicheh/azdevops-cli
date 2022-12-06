@@ -1,4 +1,3 @@
-
 import os
 from src.release_manager.exceptions.release_manager_exception import ReleaseManagerException
 

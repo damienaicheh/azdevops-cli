@@ -18,11 +18,219 @@ variables:
 steps:
   
   - checkout: self
-  
+    persistCredentials: true
+
+  - task: gitversion/setup@0
+    displayName: 'Install GitVersion $(GitVersion)'
+    inputs:
+      versionSpec: '$(GitVersion)'
+
+  - task: gitversion/execute@0
+    displayName: 'Calculate SemVer'
+    inputs:
+      useConfigFile: true
+      configFilePath: .gitversion.yml
+
   - task: UsePythonVersion@0
     displayName: 'Use python 3.8'
     inputs:
       versionSpec: '3.8'
       addToPath: true
       architecture: 'x64'
+
+  - task: Bash@3
+    displayName: 'Update package version'
+    inputs:
+      targetType: inline
+      script: |
+        python3 $(Build.SourcesDirectory)/scripts/set-cli-version.py -f $(Build.SourcesDirectory)/pyproject.toml
+        cat $(Build.SourcesDirectory)/pyproject.toml
+
+  - task: Bash@3
+    displayName: 'Install application dependencies'
+    inputs:
+      targetType: 'inline'
+      script: |
+        set -x
+        python3 -m venv .venv
+        source .venv/bin/activate
+        python3 -m pip install --upgrade pip
+        pip install --target="./.python_packages/lib/site-packages" -r requirements.txt
+        pip install -r requirements.txt
+    
+  - task: Bash@3
+    displayName: 'Unit tests and coverage'
+    inputs:
+      targetType: 'inline'
+      script: |
+        set -x
+        source .venv/bin/activate
+        coverage run -m unittest discover
+        if [ $? != 0 ] ; then
+          exit 1
+        fi
+        coverage xml
   
+  - task: reportgenerator@5
+    displayName: 'Generate code coverage report'
+    inputs:
+      reports: '$(Build.SourcesDirectory)/coverage.xml'
+      targetdir: '$(Build.SourcesDirectory)/codecoverage'
+      sourcedirs: '$(Build.SourcesDirectory)'
+      verbosity: 'Verbose'
+      historydir: '$(codecoveragehistory.directory)'
+
+  - task: PublishCodeCoverageResults@1
+    displayName: 'Publish code coverage report'
+    inputs:
+      codeCoverageTool: Cobertura
+      summaryFileLocation: '$(Build.SourcesDirectory)/coverage.xml'
+      reportDirectory: '$(Build.SourcesDirectory)/codecoverage'
+
+  - task: Bash@3
+    displayName: 'Build and package the CLI'
+    inputs:
+      targetType: 'inline'
+      script: |
+        source .venv/bin/activate
+        pip install build
+        python -m build
+
+  - task: PublishBuildArtifacts@1
+    displayName: 'Publish artifact'
+    inputs:
+      PathtoPublish: $(Build.SourcesDirectory)/dist
+      ArtifactName: drop
+      publishLocation: Container
+
+  - task: Bash@3
+    displayName: 'Tag version'
+    inputs:
+      targetType: 'inline'
+      script: |
+        #!/usr/bin/env bash
+        set -x 
+        git config --global user.name $GITTAGUSERNAME
+        git config --global user.email $GITTAGUSEREMAIL
+        git tag -a $BUILD_BUILDNUMBER $GITVERSION_SHORTSHA -m "$GITTAGMESSAGE"
+        git push origin $BUILD_BUILDNUMBER
+    condition: |
+      and(
+        succeeded(),  
+        eq(variables['Build.Reason'], 'IndividualCI'),
+        or(
+          eq(variables['Build.SourceBranch'], 'refs/heads/main'),
+          startsWith(variables['Build.SourceBranch'], 'refs/heads/releases'),
+          startsWith(variables['Build.SourceBranch'], 'refs/heads/support')
+        )
+      )
+
+  - task: Bash@3
+    displayName: 'Docker login'
+    inputs:
+      targetType: inline
+      script: |
+        echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_USERNAME" --password-stdin 
+    env:
+      DOCKER_USERNAME: $(DockerUsername)
+      DOCKER_PASSWORD: $(DockerPassword)  
+    # condition: |
+    #   and(
+    #     succeeded(),  
+    #     eq(variables['Build.Reason'], 'IndividualCI'),
+    #     or(
+    #       eq(variables['Build.SourceBranch'], 'refs/heads/main'),
+    #       startsWith(variables['Build.SourceBranch'], 'refs/heads/releases'),
+    #       startsWith(variables['Build.SourceBranch'], 'refs/heads/support')
+    #     )
+    #   )
+  
+  - task: Bash@3
+    displayName: 'Docker build'
+    inputs:
+      targetType: inline
+      script: |
+        docker buildx build --output "type=image,push=true" --platform linux/amd64 \
+                            --build-arg VERSION=$SEMVER \
+                            --build-arg BUILD_DATE=$(date -u +'%Y-%m-%dT%H:%M:%SZ') \
+                            --build-arg VCS_REF=$SHORTSHA \
+                            --tag $DOCKER_IMAGE_NAME:$SEMVER \
+                            --tag $DOCKER_IMAGE_NAME:latest \
+                            --file ./Dockerfile .
+    env:
+      DOCKER_IMAGE_NAME: $(DockerImageName)
+    # condition: |
+    #   and(
+    #     succeeded(),  
+    #     eq(variables['Build.Reason'], 'IndividualCI'),
+    #     or(
+    #       eq(variables['Build.SourceBranch'], 'refs/heads/main'),
+    #       startsWith(variables['Build.SourceBranch'], 'refs/heads/releases'),
+    #       startsWith(variables['Build.SourceBranch'], 'refs/heads/support')
+    #     )
+    #   )
+
+  - task: Bash@3
+    displayName: 'Docker logout'
+    inputs:
+      targetType: inline
+      script: |
+        docker logout
+    # condition: |
+    #   and(
+    #     succeeded(),  
+    #     eq(variables['Build.Reason'], 'IndividualCI'),
+    #     or(
+    #       eq(variables['Build.SourceBranch'], 'refs/heads/main'),
+    #       startsWith(variables['Build.SourceBranch'], 'refs/heads/releases'),
+    #       startsWith(variables['Build.SourceBranch'], 'refs/heads/support')
+    #     )
+    #   )
+
+  - task: Bash@3
+    displayName: 'Prepare to package the CLI'
+    inputs:
+      targetType: 'inline'
+      script: |
+        pip install twine
+    condition: |
+      and(
+        succeeded(),  
+        eq(variables['Build.Reason'], 'IndividualCI'),
+        or(
+          eq(variables['Build.SourceBranch'], 'refs/heads/main'),
+          startsWith(variables['Build.SourceBranch'], 'refs/heads/releases'),
+          startsWith(variables['Build.SourceBranch'], 'refs/heads/support')
+        )
+      )
+
+  - task: TwineAuthenticate@1
+    inputs:
+      pythonUploadServiceConnection: 'AzDevOpsCliServiceConnection'
+    condition: |
+      and(
+        succeeded(),  
+        eq(variables['Build.Reason'], 'IndividualCI'),
+        or(
+          eq(variables['Build.SourceBranch'], 'refs/heads/main'),
+          startsWith(variables['Build.SourceBranch'], 'refs/heads/releases'),
+          startsWith(variables['Build.SourceBranch'], 'refs/heads/support')
+        )
+      )
+      
+  - task: Bash@3
+    displayName: 'Upload to Pypi'
+    inputs:
+      targetType: 'inline'
+      script: |
+        python3 -m twine upload --skip-existing --verbose --repository azdevops-cli --config-file $(PYPIRC_PATH) $(Build.SourcesDirectory)/dist/*.whl
+    condition: |
+      and(
+        succeeded(),  
+        eq(variables['Build.Reason'], 'IndividualCI'),
+        or(
+          eq(variables['Build.SourceBranch'], 'refs/heads/main'),
+          startsWith(variables['Build.SourceBranch'], 'refs/heads/releases'),
+          startsWith(variables['Build.SourceBranch'], 'refs/heads/support')
+        )
+      )

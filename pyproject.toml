@@ -14,5 +14,5 @@ classifiers = [
     "Operating System :: OS Independent",
 ]
 [project.urls]
-"Homepage" = "https://github.com/damienaicheh/azdev-cli"
-"Bug Tracker" = "https://github.com/damienaicheh/azdev-cli/issues"
+"Homepage" = "https://github.com/damienaicheh/azdevops-cli"
+"Bug Tracker" = "https://github.com/damienaicheh/azdevops-cli/issues"

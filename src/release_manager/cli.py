@@ -1,4 +1,3 @@
-
 import click
 from src.release_manager.commands.cli.changelog_command import ChangeLogCommand
 from src.release_manager.commands.cli.manifest_command import ManifestCommand
