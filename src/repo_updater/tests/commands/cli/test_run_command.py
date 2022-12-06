@@ -80,7 +80,9 @@ class TestRunCommand(unittest.TestCase):
        excepted = self.command.get_output(obj)
        self.assertEqual(actual, excepted)
 
-    def test_should_be_output_throw_exception_not_valid(self):
+    @patch('os.path.isdir')
+    def test_should_be_output_throw_exception_not_valid(self, mock_isdir) -> None:
+        mock_isdir.return_value = False
         with self.assertRaises(RepoUpdaterException) as ex:
             obj = {'output': os.path.join(os.getcwd(),'../a') }
             self.command.get_output(obj)
