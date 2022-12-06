@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
 from src.models.version_infos import VersionInfos
 from setuptools import setup, find_packages
 
