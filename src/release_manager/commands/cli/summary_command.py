@@ -2,6 +2,7 @@ import traceback
 import os
 import sys
 from src.base.commands.cli.cli_command import CliCommand
+from src.helpers.azure_devops import get_credentials
 from src.release_manager.helpers.os_util import get_valid_folder_path
 from src.release_manager.helpers.summary_generator import generate_summary
 from src.models.azure_devops_credentials import AzureDevOpsCredentials
@@ -13,14 +14,12 @@ class SummaryCommand(CliCommand):
         super().__init__(logger)
 
     def _on_execute(self, obj):
-        organization_url = obj['organization_url']
-        pat_token = obj['pat_token']
         project_name = obj['project_name']
         output = get_valid_folder_path(obj, 'output')
-        azure_devops_creds = AzureDevOpsCredentials(organization_url=os.getenv("AZDEVOPS_ORGANIZATION_URL"),
-                               pat_token=os.getenv("AZDEVOPS_PAT_TOKEN"))
+        credential = get_credentials()
+
         try:
-            generate_summary(azure_devops_creds, project_name, output)
+            generate_summary(credential, project_name, output, self.logger)
         except:
             traceback.print_exc()
             sys.exit(1)
