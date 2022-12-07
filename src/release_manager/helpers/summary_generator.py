@@ -18,7 +18,7 @@ def generate_row(element: str, index: int, max_column: int) -> str:
     line = '|'
     for x in range(max_column):
         if x == index:
-            line += f' {element} |'
+            line += f' {element} '
         else:
             line += f' | '
     line += '|\n'
@@ -28,7 +28,7 @@ def generate_separator_for_header(max_column: int) -> str:
     line = '|'
     for x in range(max_column):
         line += f' - |'
-    line += ' - |\n'
+    line += '\n'
     return line
 
 def format_artifact(artifacts: List) -> str: 
@@ -72,7 +72,7 @@ def generate_summary(azure_devops_creds: AzureDevOpsCredentials, project_name: s
         if  hasattr(release, 'environments'):
             for release_env in release.environments:
                 if max_environment_per_release < len(release.environments):
-                    max_environment_per_release = len(release.environments)
+                    max_environment_per_release = len(release.environments) + 1
                 # Get the detail informations for a release
                 try:
                     if release_env.currentRelease.id != 0:
