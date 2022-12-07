@@ -53,7 +53,7 @@ def get_personal_access_token() -> str:
 
 def get_authorization_header(azure_devops_creds: AzureDevOpsCredentials) -> str:
     """Define the Authorization header"""
-    data = f'{azure_devops_creds.pat_token}'
+    data = f':{azure_devops_creds.pat_token}'
     encoded_pat_token = base64.b64encode(data.encode('utf-8'))
     return f'Basic {encoded_pat_token.decode("utf-8")}'
 

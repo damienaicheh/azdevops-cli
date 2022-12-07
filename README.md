@@ -41,7 +41,7 @@ pip freeze > requirements.txt
 Export credentials as environment variable to be able to run the API calls:
 ```
 export AZDEVOPS_ORGANIZATION_URL='<your_azure_devops_organisation_url>'
-export AZDEVOPS_PAT_TOKEN='<your_email>:<your_pat>'
+export AZDEVOPS_PAT_TOKEN='<your_pat>'
 ```
 
 ## IV - Models generation
