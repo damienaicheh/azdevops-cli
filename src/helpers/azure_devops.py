@@ -161,8 +161,6 @@ def get_release_by_id(azure_devops_creds: AzureDevOpsCredentials, project_name: 
         url = f'{vsrm_azure_devops_base_url}/{azure_devops_creds.organization_name}/{project_name}/_apis/release/releases/{release_id}?api-version=7.0',
         headers = create_headers(azure_devops_creds),
     )
-    if response.status_code == 404:
-        raise AzDevOpsApiException(f'An exception occured while calling the API: The release with id {release_id} was not found')
     if response.status_code != 200:
         raise AzDevOpsApiException(response.content)
     return dic2object(response.json())

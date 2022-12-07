@@ -18,7 +18,7 @@ def generate_row(element: str, index: int, max_column: int) -> str:
     line = '|'
     for x in range(max_column):
         if x == index:
-            line += f' {element} '
+            line += f' {element} |'
         else:
             line += f' | '
     line += '|\n'
@@ -28,7 +28,7 @@ def generate_separator_for_header(max_column: int) -> str:
     line = '|'
     for x in range(max_column):
         line += f' - |'
-    line += '\n'
+    line += ' - |\n'
     return line
 
 def format_artifact(artifacts: List) -> str: 
@@ -75,13 +75,14 @@ def generate_summary(azure_devops_creds: AzureDevOpsCredentials, project_name: s
                     max_environment_per_release = len(release.environments)
                 # Get the detail informations for a release
                 try:
-                    release_detail = get_release_by_id(azure_devops_creds, project_name, release_env.currentRelease.id)
-                    release_environments = ReleaseEnvInfo(release_env.name)
-                    if  hasattr(release_detail, 'artifacts'):
-                        for artifact in release_detail.artifacts:
-                            # Get the artifacts for a release
-                            release_environments.artifacts.append(ReleaseArtifactInfo(artifact.alias, artifact.definitionReference.version.name))
-                    release_info.environments.append(release_environments)
+                    if release_env.currentRelease.id != 0:
+                        release_detail = get_release_by_id(azure_devops_creds, project_name, release_env.currentRelease.id)
+                        release_environments = ReleaseEnvInfo(release_env.name)
+                        if  hasattr(release_detail, 'artifacts'):
+                            for artifact in release_detail.artifacts:
+                                # Get the artifacts for a release
+                                release_environments.artifacts.append(ReleaseArtifactInfo(artifact.alias, artifact.definitionReference.version.name))
+                        release_info.environments.append(release_environments)
                 except AzDevOpsApiException as ex:
                     logger.error(ex.message)
         releases_infos.append(release_info)
