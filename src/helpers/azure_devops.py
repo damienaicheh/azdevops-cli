@@ -121,7 +121,7 @@ def create_pull_request(azure_devops_creds: AzureDevOpsCredentials, repository, 
                 method='POST',
                 url = f'{azure_devops_creds.organization_url}/{configuration.project.name}/_apis/git/repositories/{repository.id}/pullrequests?api-version=6.0',
                 headers = create_headers(azure_devops_creds),
-                body = body
+                json = body
             )
     if response.status_code != 201:
         raise AzDevOpsApiException(response.content)
