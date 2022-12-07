@@ -64,28 +64,26 @@ def generate_changelog(project_path: str, output: str):
         index = 0
         latest_tag = tags[0].strip()
         initial_commit = git_client.rev_list('--max-parents=0', 'HEAD')
-        file = open(os.path.join(output, 'CHANGELOG.md'), 'a')
-        file.truncate(0)
-        result = '# Change Log\n'
-        result += 'All notable changes to this project will be documented in this file.\n\n'
-        
-        for index, tag in enumerate(tags):
-            current_index = index + 1
-            if((current_index) < len(tags)):
-                previous_tag = tags[current_index].strip()
-            else:
-                previous_tag = initial_commit
+        with open(os.path.join(output, 'CHANGELOG.md'), 'w') as file:
+            result = '# Change Log\n'
+            result += 'All notable changes to this project will be documented in this file.\n\n'
             
-            logs = git_client.log('--date=short',  "--pretty=format:%s | %cd", f'{previous_tag}..{latest_tag}').split('\n')
-            print(logs)
-            if len(logs) and logs[0] != '':
-                result += f'## [{latest_tag}] - {process_commit_date(logs[0])}\n\n'
+            for index, tag in enumerate(tags):
+                current_index = index + 1
+                if((current_index) < len(tags)):
+                    previous_tag = tags[current_index].strip()
+                else:
+                    previous_tag = initial_commit
+                
+                logs = git_client.log('--date=short',  "--pretty=format:%s | %cd", f'{previous_tag}..{latest_tag}').split('\n')
+                print(logs)
+                if len(logs) and logs[0] != '':
+                    result += f'## [{latest_tag}] - {process_commit_date(logs[0])}\n\n'
 
-                commits_filtered = process_commits(logs)
-                result += process_commit_message(commits_filtered)
-            
-            if((current_index) < len(tags)):
-                latest_tag = tags[current_index].strip()
+                    commits_filtered = process_commits(logs)
+                    result += process_commit_message(commits_filtered)
+                
+                if((current_index) < len(tags)):
+                    latest_tag = tags[current_index].strip()
 
-        file.write(result)
-        file.close()
+            file.write(result)
