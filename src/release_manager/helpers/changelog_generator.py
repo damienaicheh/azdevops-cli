@@ -1,7 +1,3 @@
-<<<<<<< HEAD
-=======
-
->>>>>>> 3543299 (feat: Change cli structure.)
 import git
 import os
 import re
