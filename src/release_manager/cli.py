@@ -40,17 +40,13 @@ def changelog(project_path, application_name, output, verbose):
 
 @release_manager.command(name='summary', help='generate a summary of all releases deployed')
 @click.option('-pn', '--project-name', required=True, help='application name.')
-@click.option('-ou', '--organization-url', help='The Azure DevOps organization url or set the AZDEVOPS_ORGANIZATION_URL env variable')
-@click.option('-pt', '--pat-token', help='The Azure DevOps PAT Token or set the AZDEVOPS_PAT_TOKEN env variable')
 @click.option('-o', '--output', default='.', help='Output path for the RELEASES_SUMMARY.md')
 @click.option('-v', '--verbose', is_flag=True, default=False, help='activate verbose log.')
-def summary(project_name, organization_url, pat_token, output, verbose):
+def summary(project_name, output, verbose):
     """Create a summary of all releases deployed"""
     logger = create_logger(verbose)
     obj = {
         'project_name': project_name,
-        'organization_url': organization_url,
-        'pat_token' : pat_token,
         'output': output
     } 
     SummaryCommand(logger).execute(obj)
