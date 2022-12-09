@@ -16,10 +16,11 @@ class SummaryCommand(CliCommand):
     def _on_execute(self, obj):
         project_name = obj['project_name']
         output = get_valid_folder_path(obj, 'output')
+        regex = obj['regex']
         credential = get_credentials()
 
         try:
-            generate_summary(credential, project_name, output, self.logger)
+            generate_summary(credential, project_name, output, regex, self.logger)
         except:
             traceback.print_exc()
             sys.exit(1)

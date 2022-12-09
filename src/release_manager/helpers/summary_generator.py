@@ -1,4 +1,5 @@
 import os
+import re
 from typing import List
 from logging import Logger
 from src.exceptions.azdevops_api_exception import AzDevOpsApiException
@@ -82,10 +83,12 @@ def create_environment_for_release_summary(azure_devops_creds: AzureDevOpsCreden
     
     return release_environments
 
-def generate_summary(azure_devops_creds: AzureDevOpsCredentials, project_name: str, output: str, logger: Logger):
+def generate_summary(azure_devops_creds: AzureDevOpsCredentials, project_name: str, output: str, release_definition_regex: str, logger: Logger):
     """Generate releases summary and export it as a Markdown file"""
     release_definitions = get_release_definitions_by_project(azure_devops_creds, project_name)
     release_definitions.sort(key=lambda r: r.name)
+    if release_definition_regex != None:
+        release_definitions = list(filter(lambda release_definition: re.match(release_definition_regex, release_definition.name), release_definitions))
     releases_summary = []
     max_environment_per_release = 0
     for release_definition in release_definitions:

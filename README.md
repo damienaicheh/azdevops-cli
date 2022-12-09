@@ -89,3 +89,12 @@ coverage run -m unittest discover
 ```
 coverage report
 ```
+
+
+### Generate a summary
+
+```
+azdevops release-manager summary -pn <project-name> -r <regex> 
+```
+
+azdevops release-manager summary -pn 'MyProject' -r '^digital(.*)_apply' 

@@ -39,13 +39,15 @@ def changelog(project_path, application_name, output, verbose):
     ManifestCommand(logger).execute(obj)
 
 @release_manager.command(name='summary', help='generate a summary of all releases deployed')
-@click.option('-pn', '--project-name', required=True, help='application name.')
+@click.option('-r', '--regex', required=False, help='Regex to filter the release definitions by name to summarize.')
+@click.option('-pn', '--project-name', required=True, help='The project name.')
 @click.option('-o', '--output', default='.', help='Output path for the RELEASES_SUMMARY.md')
 @click.option('-v', '--verbose', is_flag=True, default=False, help='activate verbose log.')
-def summary(project_name, output, verbose):
+def summary(regex, project_name, output, verbose):
     """Create a summary of all releases deployed"""
     logger = create_logger(verbose)
     obj = {
+        'regex': regex,
         'project_name': project_name,
         'output': output
     } 
