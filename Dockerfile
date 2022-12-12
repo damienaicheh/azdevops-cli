@@ -9,7 +9,7 @@ WORKDIR /app
 
 COPY requirements.txt requirements.txt
 
-RUN adduser -u 5678 --disabled-password --gecos "" appuser && chown -R appuser /app
+RUN adduser -u 5678 --disabled-password --gecos "" appuser && chown -R appuser /app && chmod 770 /app
 USER appuser
 
 RUN pip install --upgrade pip \
