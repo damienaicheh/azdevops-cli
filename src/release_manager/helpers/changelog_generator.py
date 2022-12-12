@@ -65,7 +65,7 @@ def generate_changelog(project_path: str, output: str):
         latest_tag = tags[0].strip()
         initial_commit = git_client.rev_list('--max-parents=0', 'HEAD')
         with open(os.path.join(output, 'CHANGELOG.md'), 'w') as file:
-            result = '# Change Log\n'
+            result = '# Changelog\n'
             result += 'All notable changes to this project will be documented in this file.\n\n'
             
             for index, tag in enumerate(tags):

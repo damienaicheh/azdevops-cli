@@ -11,8 +11,8 @@ def release_manager():
     pass
 
 @release_manager.command(name='changelog', help='generate changelog')
-@click.option('-p', '--project-path', required=True, help='project path.')
-@click.option('-o', '--output', default='.', help='Output path for the CHANGELOG.md')
+@click.option('-p', '--project-path', required=False, help='project path.')
+@click.option('-o', '--output', required=False, help='Output path for the CHANGELOG.md')
 @click.option('-v', '--verbose', is_flag=True, default=False, help='activate verbose log.')
 def changelog(project_path, output, verbose):
     """Run the script to generate a CHANGELOG.md"""
@@ -41,7 +41,7 @@ def changelog(project_path, application_name, output, verbose):
 @release_manager.command(name='summary', help='generate a summary of all releases deployed')
 @click.option('-r', '--regex', required=False, help='Regex to filter the release definitions by name to summarize.')
 @click.option('-pn', '--project-name', required=True, help='The project name.')
-@click.option('-o', '--output', default='.', help='Output path for the RELEASES_SUMMARY.md')
+@click.option('-o', '--output', required=False, help='Output path for the RELEASES_SUMMARY.md')
 @click.option('-v', '--verbose', is_flag=True, default=False, help='activate verbose log.')
 def summary(regex, project_name, output, verbose):
     """Create a summary of all releases deployed"""

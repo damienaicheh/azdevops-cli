@@ -90,11 +90,62 @@ coverage run -m unittest discover
 coverage report
 ```
 
+### Generate a changelog
+
+```
+azdevops release-manager changelog (-p <project-path>) (-o <output>)
+```
+
+Using Docker:
+
+```shell
+docker run -v $(Build.SourcesDirectory):/app \ 
+           -t aichehda/azdevops-cli:latest \
+                   release-manager changelog \
+                   (-p <project-path>) \
+                   (-o <output>) \
+```
 
 ### Generate a summary
 
 ```
-azdevops release-manager summary -pn <project-name> -r <regex> 
+azdevops release-manager summary -pn <project-name> (-r <regex>)
 ```
 
 azdevops release-manager summary -pn 'MyProject' -r '^digital(.*)_apply' 
+
+Using Docker:
+
+```shell
+docker run -v $(Build.SourcesDirectory):/app \ 
+           -e AZDEVOPS_ORGANIZATION_URL=$AZDEVOPS_ORGANIZATION_URL \
+           -e AZDEVOPS_PAT_TOKEN=$AZDEVOPS_PAT_TOKEN \
+           -t aichehda/azdevops-cli:latest \
+                   release-manager summary \
+                   -r '^digital(.*)_apply' \
+                   -pn MyProject \
+                   (-p <project-path>) \
+                   (-o <output>) \
+```
+
+### Generate manifest
+
+```
+azdevops release-manager manifest -an <application-name>
+```
+
+Using Docker on Azure DevOps:
+
+```shell
+docker run  -v $(Build.SourcesDirectory):/app \
+                -e BUILD_DEFINITIONNAME=$BUILD_DEFINITIONNAME \
+                -e BUILD_BUILDID=$BUILD_BUILDID \
+                -e BUILD_BUILDNUMBER=$BUILD_BUILDNUMBER \
+                -e BUILD_SOURCEBRANCHNAME=$BUILD_SOURCEBRANCHNAME \
+                -e BUILD_REPOSITORY_NAME=$BUILD_REPOSITORY_NAME \
+                -t aichehda/azdevops-cli:latest \
+                        release-manager manifest \
+                        -an my_app
+                        (-p <project-path>) \
+                        (-o <output>) \
+```
