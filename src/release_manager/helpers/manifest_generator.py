@@ -14,7 +14,7 @@ def generate_manifest(project_path: str, application_name: str, output: str):
     
     git_client = git.Git(project_path if project_path != None else os.path)
     initial_commit = git_client.rev_parse('HEAD')
-    lastest_tag = git_client.describe('--abbrev=0')
+    latest_tag = git_client.describe('--abbrev=0')
 
     with open(os.path.join(output, 'manifest.json'), 'w') as file:
         manifest = {
@@ -25,7 +25,7 @@ def generate_manifest(project_path: str, application_name: str, output: str):
             "SourceBranchName": os.getenv("BUILD_SOURCEBRANCHNAME"),
             "Scm": os.getenv("BUILD_REPOSITORY_NAME"),
             "Sha1": initial_commit,
-            "LatestTag": lastest_tag
+            "LatestTag": latest_tag
         }
 
         file.write(json.dumps(manifest))
