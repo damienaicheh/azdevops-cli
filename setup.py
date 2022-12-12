@@ -30,6 +30,7 @@ setup (
         'msrest==0.6.21',
         'oauthlib==3.2.2',
         'PyYAML==6.0',
+        'python-dateutil==2.8.2',
         'requests==2.28.1',
         'requests-oauthlib==1.3.1',
         'six==1.16.0',
