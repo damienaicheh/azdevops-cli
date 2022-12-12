@@ -23,7 +23,7 @@ def generate_manifest(project_path: str, application_name: str, output: str):
             "BuildId": os.getenv("BUILD_BUILDID"),
             "BuildNumber": os.getenv("BUILD_BUILDNUMBER"),
             "SourceBranchName": os.getenv("BUILD_SOURCEBRANCHNAME"),
-            "Scm": os.getenv("BUILD_REPOSITORY_NAME"),
+            "Scm": os.getenv('Build.Repository.Name'),
             "Sha1": initial_commit,
             "LatestTag": latest_tag
         }
