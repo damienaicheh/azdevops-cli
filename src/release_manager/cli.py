@@ -24,9 +24,9 @@ def changelog(project_path, output, verbose):
     ChangeLogCommand(logger).execute(obj)
 
 @release_manager.command(name='manifest', help='generate a manifest')
-@click.option('-p', '--project-path', required=True, help='project path.')
+@click.option('-p', '--project-path', required=False, help='project path.')
 @click.option('-an', '--application-name', required=True, help='application name.')
-@click.option('-o', '--output', default='.', help='Output path for the manifest.json')
+@click.option('-o', '--output', required=False, help='Output path for the manifest.json')
 @click.option('-v', '--verbose', is_flag=True, default=False, help='activate verbose log.')
 def changelog(project_path, application_name, output, verbose):
     """Create a JSON manifest for a repository"""
