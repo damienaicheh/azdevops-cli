@@ -1,7 +1,9 @@
 import os
 import re
-from datetime import datetime
-from dateutil import tz
+from dateutil import (
+    parser,
+    tz
+)
 from typing import List
 from logging import Logger
 from src.exceptions.azdevops_api_exception import AzDevOpsApiException
@@ -44,10 +46,16 @@ def format_artifact(artifacts: List) -> str:
         lines += f' {artifact.name} : **{artifact.version}** <br />'
     return lines
 
-def convert_string_to_date(date: str):
+def format_string_to_datetime(date: str):
+    """Format string date to datetime"""
     from_zone = tz.tzutc()
-    date_time_obj = datetime.strptime(date, '%Y-%m-%dT%H:%M:%S.%fZ')
-    return date_time_obj.replace(tzinfo=from_zone).date()
+    to_zone = tz.tzlocal()
+
+    utc = parser.parse(date)
+    utc = utc.replace(tzinfo=from_zone)
+    date_time = utc.astimezone(to_zone)
+
+    return f'{date_time.date()} {date_time.strftime("%H:%M")}'
 
 def generate_environment_row(environments: List) -> str:
     """Generate the environment row with the artifacts associated to it"""
@@ -57,7 +65,7 @@ def generate_environment_row(environments: List) -> str:
         return '|| No deployment. |\n'
     else:
         for env in environments:
-            header_lines += f' ***{env.name}*** <br /> ({convert_string_to_date(env.deployed_on)}) |'
+            header_lines += f' ***{env.name}*** <br /> ({format_string_to_datetime(env.deployed_on)}) |'
             artifacts_lines += f' {format_artifact(env.artifacts)} |'
     header_lines += '\n'
     artifacts_lines += '\n'
