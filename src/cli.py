@@ -1,3 +1,6 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
 import click
 from src.release_manager.cli import release_manager
 from src.repo_updater.cli import repo_updater
