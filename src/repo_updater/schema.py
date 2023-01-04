@@ -52,6 +52,9 @@ Update = {
                             'required': True,
                             'type': 'string'
                         },
+                        'group_name': {
+                           'type': 'string' 
+                        },
                         'ignore_case' :{
                             'type': 'boolean'
                         }

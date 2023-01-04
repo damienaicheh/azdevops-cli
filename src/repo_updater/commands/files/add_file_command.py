@@ -38,18 +38,25 @@ class AddFileCommand(FileCommand):
             target_path
         )
 
-    def _on_execute(self, args: FileCommandArgs):
+    def _on_execute(self, args: FileCommandArgs) -> bool:
         """Add new directory or file to the repository"""
         asset_path = self.get_asset_path(args)
         override = self.get_override(args)
         target_path = self.get_target_path(args)
+        processed = False
         if override:
             if os.path.exists(target_path):
                 if os.path.isfile(target_path):
                     os.remove(target_path)
                 if os.path.isdir(target_path):
                     shutil.rmtree(target_path)
+        else:
+            if os.path.exists(target_path):
+               return processed
         if os.path.isdir(asset_path):
             shutil.copytree(asset_path, target_path)
+            processed = True
         if os.path.isfile(asset_path):
             shutil.copyfile(asset_path, target_path)
+            processed = True
+        return processed

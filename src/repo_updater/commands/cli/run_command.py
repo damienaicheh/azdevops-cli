@@ -68,7 +68,8 @@ class RunCommand(CliCommand):
             with open(configuration_file, 'r') as file:
                 self.logger.info('Load configuration...')
                 document = yaml.load(file, Loader=yaml.FullLoader)
-                v = Validator(Schema)
+                v = Validator()
+                v.schema = Schema
                 if not v.validate(document):
                     self.logger.error(v._errors)
                     raise RepoUpdaterException(f'The configuration file \'{configuration_file}\' don\'t have a valid schema.')
@@ -119,15 +120,20 @@ class RunCommand(CliCommand):
                 if os.path.exists(to_path):
                     shutil.rmtree(to_path)
                 repo = clone_repository(credential, repository.remoteUrl, to_path, configuration.repository.default_branch)
+                processed = False
                 for action in configuration.actions:
+                    self.logger.debug(action)
                     args = self.build_command_args(configuration, output, repository, action)
                     if hasattr(action, 'add'):
-                        command_catalog['add'].execute(args)
+                        if command_catalog['add'].execute(args):
+                            processed = True
                     elif hasattr(action, 'delete'):
-                        command_catalog['delete'].execute(args)
+                        if command_catalog['delete'].execute(args):
+                            processed = True
                     else:
-                        command_catalog['update'].execute(args)
-                if not dry_run:
+                        if command_catalog['update'].execute(args):
+                            processed = True
+                if not dry_run and processed:
                     # commit and push source on new branch
                     commit_and_push_changes(repo, configuration.pull_request, self.logger)
                     # create a new pull request

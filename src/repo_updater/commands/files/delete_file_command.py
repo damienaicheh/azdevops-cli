@@ -22,10 +22,14 @@ class DeleteFileCommand(FileCommand):
             target_path
         )  
 
-    def _on_execute(self, args: FileCommandArgs) -> None:
+    def _on_execute(self, args: FileCommandArgs) -> bool:
         """Delete list of files from the repository"""
+        processed = False
         target_path = self.get_target_path(args)
         if os.path.isdir(target_path):
             shutil.rmtree(target_path)
+            processed = True
         if os.path.isfile(target_path):
             os.remove(target_path)
+            processed = True
+        return processed

@@ -20,6 +20,7 @@ class TestRunCommand(unittest.TestCase):
         actual = 'https://dev.azure.com/damienaicheh0990/'
         self.assertEqual(expected, actual)
     
+    @patch.dict(os.environ, {'AZDEVOPS_ORGANIZATION_URL': ''}, clear=True)
     def test_should_be_organization_url_throw_exception_is_required(self):
         with self.assertRaises(AzDevOpsException) as ex:
             get_organization_url()
@@ -37,6 +38,7 @@ class TestRunCommand(unittest.TestCase):
         actual = 'azertyuio'
         self.assertEqual(expected, actual)
     
+    @patch.dict(os.environ, {'AZDEVOPS_PAT_TOKEN': ''}, clear=True)
     def test_should_be_pat_token_throw_exception_is_required(self):
         with self.assertRaises(AzDevOpsException) as ex:
             obj = {}

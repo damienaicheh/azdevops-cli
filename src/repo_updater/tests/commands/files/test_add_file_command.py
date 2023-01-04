@@ -81,7 +81,7 @@ class TestAddFileCommand(unittest.TestCase):
             action = action
         )
         excepted = self.command.get_override(args)
-        self.assertFalse( excepted)
+        self.assertFalse(excepted)
 
     def test_should_be_get_override_default(self):
         action = {}
@@ -95,3 +95,20 @@ class TestAddFileCommand(unittest.TestCase):
         )
         excepted = self.command.get_override(args)
         self.assertTrue(excepted)
+
+    def test_should_be_get_target_path_is_valid(self):
+        action = {}
+        action['add'] = {}
+        action['add']['target_path'] = 'b'
+        action = dic2object(action)
+        repository = {}
+        repository['name'] = 'a'
+        repository = dic2object(repository)
+        args = FileCommandArgs(
+            assets_directory = '/tmp',
+            output = '/tmp',
+            repository = repository,
+            action = action
+        )
+        excepted = self.command.get_target_path(args)
+        self.assertEqual(excepted, '/tmp/a/b')
