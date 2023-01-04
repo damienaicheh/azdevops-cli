@@ -22,7 +22,7 @@ class DeleteFileCommand(FileCommand):
             target_path
         )  
 
-    def _on_execute(self, args: FileCommandArgs) -> None:
+    def _on_execute(self, args: FileCommandArgs) -> bool:
         """Delete list of files from the repository"""
         processed = False
         target_path = self.get_target_path(args)
