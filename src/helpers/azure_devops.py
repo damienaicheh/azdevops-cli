@@ -1,7 +1,7 @@
 import base64
-import json
 import os
 import re
+from datetime import datetime
 from logging import Logger
 from git import Repo
 from requests import request
@@ -10,6 +10,7 @@ from src.models.azure_devops_credentials import AzureDevOpsCredentials
 from src.models.azure_devops_definition import AzureDevOpsDefinition
 from src.exceptions.azdevops_exception import AzDevOpsException
 from src.models.helper import dic2object
+from src.models.wiki import Wiki
 
 """
 Organization url pattern that match both posibilities:
@@ -19,6 +20,9 @@ organization_url_pattern = '^https:\/\/(dev\.azure\.com\/(?P<org1>[^\/]+)|(?P<or
 
 """Base url used for calling release definition API"""
 vsrm_azure_devops_base_url = 'https://vsrm.dev.azure.com'
+
+"""Azure DevOps Website url"""
+azure_devops_base_url = 'https://dev.azure.com'
 
 def get_organization_name() -> str:
     """Extract the organization name"""
@@ -164,3 +168,80 @@ def get_release_by_id(azure_devops_creds: AzureDevOpsCredentials, project_name: 
     if response.status_code != 200:
         raise AzDevOpsApiException(response.content)
     return dic2object(response.json())
+
+
+def init_wiki(azure_devops_creds: AzureDevOpsCredentials, project_name: str) -> str:
+    """Get the current wiki or create one if not exist"""
+    response = request(
+            method='GET',
+            url = f'{azure_devops_base_url}/{azure_devops_creds.organization_name}/{project_name}/_apis/wiki/wikis?api-version=7.0',
+            headers = create_headers(azure_devops_creds),
+        )
+    if response.status_code != 200:
+        raise AzDevOpsApiException(response.content)
+    
+    for first_item in response.json()['value']:
+        wiki =  dic2object(first_item)
+    return wiki.id
+
+def create_wiki_header_page(azure_devops_creds: AzureDevOpsCredentials, project_name: str, wiki_id: str, wiki_folder: str) -> None:
+    """Create a new wiki page"""
+    response = request(
+        method='PUT',
+        url = f'{azure_devops_base_url}/{azure_devops_creds.organization_name}/{project_name}/_apis/wiki/wikis/{wiki_id}/pages/{wiki_folder}?api-version=7.0',
+        headers = create_headers(azure_devops_creds),
+    )
+
+    if response.status_code == 500:
+        type_key = response.json()['typeKey']
+        if type_key == 'WikiPageAlreadyExistsException':
+            return
+
+    if response.status_code != 201:
+        raise AzDevOpsApiException(response.content)
+
+def get_wiki_page_by_name(azure_devops_creds: AzureDevOpsCredentials, project_name: str, wiki_id: str, wiki_path: str):
+    response = request(
+        method='GET',
+        url = f'{azure_devops_base_url}/{azure_devops_creds.organization_name}/{project_name}/_apis/wiki/wikis/{wiki_id}/pages?path={wiki_path}$api-version=7.0',
+        headers = create_headers(azure_devops_creds),
+    )
+
+    if response.status_code != 200:
+        raise AzDevOpsApiException(response.content)
+
+    wiki =  dic2object(response.json())
+    e_tag = response.headers["etag"]
+
+    return Wiki(wiki.id, e_tag)
+
+
+def create_or_update_wiki_page(azure_devops_creds: AzureDevOpsCredentials, project_name: str, wiki_id: str, wiki_folder: str, content: str, page_name: str= None) -> None:
+    """Create a new wiki page"""
+    date_time = datetime.now()
+    page_path = page_name if page_name != None else f'{date_time.date()}_{date_time.strftime("%H-%M-%S")}'
+
+    response = request(
+        method='PUT',
+        url = f'{azure_devops_base_url}/{azure_devops_creds.organization_name}/{project_name}/_apis/wiki/wikis/{wiki_id}/pages/{wiki_folder}/{page_path}?api-version=7.0',
+        headers = create_headers(azure_devops_creds),
+        json = {
+            "content": content
+        }
+    )
+    if response.status_code == 500:
+        type_key = response.json()['typeKey']
+        if type_key == 'WikiPageAlreadyExistsException':
+            wiki_path = f'{wiki_folder}/{page_name}'
+            wiki = get_wiki_page_by_name(azure_devops_creds, project_name, wiki_id, f'/{wiki_path}')
+            response = request(
+                method='PUT',
+                url = f'{azure_devops_base_url}/{azure_devops_creds.organization_name}/{project_name}/_apis/wiki/wikis/{wiki_id}/pages/{wiki_path}?api-version=7.0',
+                headers = create_headers(azure_devops_creds).update({'if-Match': wiki.e_tag}),
+                json = {
+                    "content": content
+                }
+            )
+            
+    if response.status_code != 201:
+        raise AzDevOpsApiException(response.content)

@@ -10,7 +10,10 @@ from src.exceptions.azdevops_api_exception import AzDevOpsApiException
 from src.helpers.azure_devops import (
     get_release_definitions_by_project,
     get_release_by_definition,
-    get_release_by_id
+    get_release_by_id,
+    init_wiki,
+    create_wiki_header_page,
+    create_or_update_wiki_page
 )
 from src.models.azure_devops_credentials import AzureDevOpsCredentials
 from src.models.release_summary import (
@@ -80,6 +83,14 @@ def get_last_deployment_date_by_environment(release_environments: List, env_name
     
     return ''
 
+def upload_wiki(azure_devops_creds: AzureDevOpsCredentials, project_name: str, wiki_folder: str, output: str):
+    wiki_id = init_wiki(azure_devops_creds, project_name)
+    create_wiki_header_page(azure_devops_creds, project_name, wiki_id, wiki_folder)
+    with open(os.path.join(output, 'RELEASES_SUMMARY.md'), 'r') as file: 
+        content = file.read()  
+        create_or_update_wiki_page(azure_devops_creds, project_name, wiki_id, wiki_folder, content)
+        create_or_update_wiki_page(azure_devops_creds, project_name, wiki_id, wiki_folder, content, 'latest')
+
 def generate_markdown(output: str, releases_infos: List, max_column: int):
     """Generate markdown releases summary file"""
     with open(os.path.join(output, 'RELEASES_SUMMARY.md'), 'w') as file:    
@@ -101,7 +112,7 @@ def create_environment_for_release_summary(azure_devops_creds: AzureDevOpsCreden
     
     return release_environments
 
-def generate_summary(azure_devops_creds: AzureDevOpsCredentials, project_name: str, output: str, release_definition_regex: str, logger: Logger):
+def generate_summary(azure_devops_creds: AzureDevOpsCredentials, project_name: str, wiki_folder:str, upload:bool, output: str, release_definition_regex: str, logger: Logger):
     """Generate releases summary and export it as a Markdown file"""
     release_definitions = get_release_definitions_by_project(azure_devops_creds, project_name)
     release_definitions.sort(key=lambda r: r.name)
@@ -124,6 +135,7 @@ def generate_summary(azure_devops_creds: AzureDevOpsCredentials, project_name: s
                 except AzDevOpsApiException as ex:
                     logger.error(ex.message)
         releases_summary.append(release_summary)
-
+    
     generate_markdown(output, releases_summary, max_environment_per_release)
-        
+    if upload:
+        upload_wiki(azure_devops_creds, project_name, wiki_folder, output)
