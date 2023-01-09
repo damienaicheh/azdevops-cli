@@ -22,6 +22,8 @@ from src.models.release_summary import (
     ReleaseArtifactSummary
 )
 
+wiki_base_folder = 'Generated Release Summary'
+
 def generate_text_in_row(element: str, index: int, max_column: int) -> str:
     """Generate text in the identified column index in a table row"""
     line = '|'
@@ -85,11 +87,18 @@ def get_last_deployment_date_by_environment(release_environments: List, env_name
 
 def upload_wiki(azure_devops_creds: AzureDevOpsCredentials, project_name: str, wiki_folder: str, output: str):
     wiki_id = init_wiki(azure_devops_creds, project_name)
-    create_wiki_header_page(azure_devops_creds, project_name, wiki_id, wiki_folder)
+    ## Generate the parent page to store all the pages
+    create_wiki_header_page(azure_devops_creds, project_name, wiki_id, wiki_base_folder)
+    wiki_base_path = f'{wiki_base_folder}/{wiki_folder}'
+
+    ## Generate the page to store all the RELEASES SUMMARY pages
+    create_wiki_header_page(azure_devops_creds, project_name, wiki_id, wiki_base_path)
+
     with open(os.path.join(output, 'RELEASES_SUMMARY.md'), 'r') as file: 
         content = file.read()  
-        create_or_update_wiki_page(azure_devops_creds, project_name, wiki_id, wiki_folder, content)
-        create_or_update_wiki_page(azure_devops_creds, project_name, wiki_id, wiki_folder, content, 'latest')
+        ## Store all the RELEASES SUMMARY pages and reset the latest page with the most updated content
+        create_or_update_wiki_page(azure_devops_creds, project_name, wiki_id, wiki_base_path, content)
+        create_or_update_wiki_page(azure_devops_creds, project_name, wiki_id, wiki_base_path, content, 'latest')
 
 def generate_markdown(output: str, releases_infos: List, max_column: int):
     """Generate markdown releases summary file"""
