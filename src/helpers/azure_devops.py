@@ -10,8 +10,9 @@ from src.helpers.strings import are_texts_equals
 from src.models.azure_devops_credentials import AzureDevOpsCredentials
 from src.models.azure_devops_definition import AzureDevOpsDefinition
 from src.exceptions.azdevops_exception import AzDevOpsException
+from src.models.azure_devops_project import AzureDevOpsProject
 from src.models.helper import dic2object
-from src.models.wiki import WikiPage
+from src.models.azure_devops_wiki import AzureDevOpsWikiPage
 
 """
 Organization url pattern that match both posibilities:
@@ -175,9 +176,24 @@ def get_release_by_id(azure_devops_creds: AzureDevOpsCredentials, project_name: 
         raise AzDevOpsApiException(response.content)
     return dic2object(response.json())
 
-
-def init_wiki(azure_devops_creds: AzureDevOpsCredentials, project_name: str) -> str:
+def get_project(azure_devops_creds: AzureDevOpsCredentials, project_name: str):
     """Get the current wiki or create one if not exist"""
+    response = request(
+            method='GET',
+            url = f'{azure_devops_base_url}/{azure_devops_creds.organization_name}/_apis/projects/{project_name}?api-version=7.0',
+            headers = create_headers(azure_devops_creds),
+        )
+
+    if response.status_code != 200:
+        raise AzDevOpsApiException(response.content)
+    
+    project =  dic2object(response.json())
+    return AzureDevOpsProject(project.id, project.name)
+
+def init_wiki(azure_devops_creds: AzureDevOpsCredentials, project_name: str, logger: Logger) -> str:
+    """Get the current wiki or create one if not exist"""
+    logger.info('Init the wiki...')
+    logger.info('Check if a wiki already exists...')
     response = request(
             method='GET',
             url = f'{azure_devops_base_url}/{azure_devops_creds.organization_name}/{project_name}/_apis/wiki/wikis?api-version=7.0',
@@ -186,12 +202,32 @@ def init_wiki(azure_devops_creds: AzureDevOpsCredentials, project_name: str) -> 
     if response.status_code != 200:
         raise AzDevOpsApiException(response.content)
     
-    for first_item in response.json()['value']:
-        wiki =  dic2object(first_item)
-    return wiki.id
+    wikis = response.json()['value']
+    if len(wikis):
+        wiki =  dic2object(wikis[0])
+        logger.info(f'The wiki: {wiki.name} was found.')
+        return wiki.id
+    else:
+        logger.info(f'No wiki was found, creation in progress...')
+        project = get_project(azure_devops_creds, project_name)
+        response = request(
+            method='POST',
+            url = f'{azure_devops_base_url}/{azure_devops_creds.organization_name}/{project_name}/_apis/wiki/wikis?api-version=7.0',
+            headers = create_headers(azure_devops_creds),
+            json = {
+                "type": "projectWiki",
+                "name": f"{project.name} Wiki",
+                "projectId": f"{project.id}"
+            }
+        )
+        if response.status_code != 201:
+            raise AzDevOpsApiException(response.content)
 
-def create_wiki_header_page(azure_devops_creds: AzureDevOpsCredentials, project_name: str, wiki_id: str, wiki_folder: str, logger: Logger) -> None:
-    """Create a new wiki page"""
+        wiki = dic2object(response.json())
+        return wiki.id
+
+def create_wiki_container_page(azure_devops_creds: AzureDevOpsCredentials, project_name: str, wiki_id: str, wiki_folder: str, logger: Logger) -> None:
+    """Create a container page to contain all future pages with releases summaries"""
     response = request(
         method='PUT',
         url = f'{azure_devops_base_url}/{azure_devops_creds.organization_name}/{project_name}/_apis/wiki/wikis/{wiki_id}/pages/{wiki_folder}?api-version=7.0',
@@ -201,20 +237,20 @@ def create_wiki_header_page(azure_devops_creds: AzureDevOpsCredentials, project_
     if response.status_code == 500:
         type_key = response.json()['typeKey']
         if type_key == 'WikiPageAlreadyExistsException':
-            logger.info(f'The {wiki_folder} page already exists.')
+            logger.info(f'The {wiki_folder} page already exists, nothing will be created.')
             return
 
     if response.status_code != 201:
         raise AzDevOpsApiException(response.content)
 
-def get_wiki_page_by_name(azure_devops_creds: AzureDevOpsCredentials, project_name: str, wiki_id: str, wiki_path: str, include_content: bool = False) -> WikiPage:
+def get_wiki_page_by_name(azure_devops_creds: AzureDevOpsCredentials, project_name: str, wiki_id: str, wiki_path: str, include_content: bool = False) -> AzureDevOpsWikiPage:
     response = request(
         method='GET',
         url = f'{azure_devops_base_url}/{azure_devops_creds.organization_name}/{project_name}/_apis/wiki/wikis/{wiki_id}/pages?path=/{wiki_path}&includeContent={include_content}&api-version=7.0',
         headers = create_headers(azure_devops_creds),
     )
     
-    ## Wiki not found
+    ## Wiki page not found
     if response.status_code == 404:
         return None
 
@@ -224,7 +260,7 @@ def get_wiki_page_by_name(azure_devops_creds: AzureDevOpsCredentials, project_na
     wiki =  dic2object(response.json())
     e_tag = response.headers["etag"]
 
-    return WikiPage(wiki.id, e_tag, wiki.content)
+    return AzureDevOpsWikiPage(wiki.id, e_tag, wiki.content)
 
 def generate_wiki_page_name(wiki_folder: str, page_name: str = None):
     """Generate the wiki page name, with a specific name or with datetime by default."""

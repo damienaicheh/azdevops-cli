@@ -12,7 +12,7 @@ from src.helpers.azure_devops import (
     get_release_by_definition,
     get_release_by_id,
     init_wiki,
-    create_wiki_header_page,
+    create_wiki_container_page,
     create_or_update_wiki_page
 )
 from src.models.azure_devops_credentials import AzureDevOpsCredentials
@@ -23,6 +23,7 @@ from src.models.release_summary import (
 )
 
 wiki_base_folder = 'Generated Release Summary'
+releases_summary_file_name = 'RELEASES_SUMMARY.md'
 
 def generate_text_in_row(element: str, index: int, max_column: int) -> str:
     """Generate text in the identified column index in a table row"""
@@ -86,22 +87,21 @@ def get_last_deployment_date_by_environment(release_environments: List, env_name
     return ''
 
 def upload_wiki(azure_devops_creds: AzureDevOpsCredentials, project_name: str, wiki_folder: str, output: str, logger: Logger):
-    logger.info('Init the wiki...')
-    wiki_id = init_wiki(azure_devops_creds, project_name)
-    logger.info('Generate the parent page to store all the pages...')
-    create_wiki_header_page(azure_devops_creds, project_name, wiki_id, wiki_base_folder, logger)
+    wiki_id = init_wiki(azure_devops_creds, project_name, logger)
+    logger.info(f'Generate the {wiki_base_folder} page to store all the pages...')
+    create_wiki_container_page(azure_devops_creds, project_name, wiki_id, wiki_base_folder, logger)
 
-    ## Generate the page to store all the RELEASES SUMMARY pages
     wiki_base_path = f'{wiki_base_folder}/{wiki_folder}'
-    create_wiki_header_page(azure_devops_creds, project_name, wiki_id, wiki_base_path, logger)
+    logger.info(f'Generate the {wiki_base_path} page to store all the pages...')
+    create_wiki_container_page(azure_devops_creds, project_name, wiki_id, wiki_base_path, logger)
 
-    with open(os.path.join(output, 'RELEASES_SUMMARY.md'), 'r') as file: 
+    with open(os.path.join(output, releases_summary_file_name), 'r') as file: 
         content = file.read()  
         create_or_update_wiki_page(azure_devops_creds, project_name, wiki_id, wiki_base_path, content, logger)
 
 def generate_markdown(output: str, releases_infos: List, max_column: int):
     """Generate markdown releases summary file"""
-    with open(os.path.join(output, 'RELEASES_SUMMARY.md'), 'w') as file:    
+    with open(os.path.join(output, releases_summary_file_name), 'w') as file:    
         file.write(generate_text_in_row('Releases Definition', 0, max_column))
         file.write(generate_separator_for_header(max_column))
         for info in releases_infos:
