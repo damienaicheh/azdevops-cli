@@ -176,7 +176,7 @@ def get_release_by_id(azure_devops_creds: AzureDevOpsCredentials, project_name: 
         raise AzDevOpsApiException(response.content)
     return dic2object(response.json())
 
-def get_project(azure_devops_creds: AzureDevOpsCredentials, project_name: str):
+def get_project(azure_devops_creds: AzureDevOpsCredentials, project_name: str) -> AzureDevOpsProject:
     """Get the current wiki or create one if not exist"""
     response = request(
             method='GET',
