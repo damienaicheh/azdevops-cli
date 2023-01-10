@@ -41,14 +41,18 @@ def changelog(project_path, application_name, output, verbose):
 @release_manager.command(name='summary', help='generate a summary of all releases deployed')
 @click.option('-r', '--regex', required=False, help='Regex to filter the release definitions by name to summarize.')
 @click.option('-pn', '--project-name', required=True, help='The project name.')
+@click.option('-wf', '--wiki-folder', required=False, help='Wiki folder name, used only if upload option is enabled')
+@click.option('-u', '--upload', required=False, is_flag=True, default=False, help='Upload the RELEASES_SUMMARY.md to the Azure DevOps wiki')
 @click.option('-o', '--output', required=False, help='Output path for the RELEASES_SUMMARY.md')
 @click.option('-v', '--verbose', is_flag=True, default=False, help='activate verbose log.')
-def summary(regex, project_name, output, verbose):
+def summary(regex, project_name, wiki_folder, upload, output, verbose):
     """Create a summary of all releases deployed"""
     logger = create_logger(verbose)
     obj = {
         'regex': regex,
         'project_name': project_name,
+        'wiki_folder': wiki_folder,
+        'upload': upload,
         'output': output
     } 
     SummaryCommand(logger).execute(obj)
