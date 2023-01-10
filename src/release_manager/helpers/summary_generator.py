@@ -85,20 +85,19 @@ def get_last_deployment_date_by_environment(release_environments: List, env_name
     
     return ''
 
-def upload_wiki(azure_devops_creds: AzureDevOpsCredentials, project_name: str, wiki_folder: str, output: str):
+def upload_wiki(azure_devops_creds: AzureDevOpsCredentials, project_name: str, wiki_folder: str, output: str, logger: Logger):
+    logger.info('Init the wiki...')
     wiki_id = init_wiki(azure_devops_creds, project_name)
-    ## Generate the parent page to store all the pages
-    create_wiki_header_page(azure_devops_creds, project_name, wiki_id, wiki_base_folder)
-    wiki_base_path = f'{wiki_base_folder}/{wiki_folder}'
+    logger.info('Generate the parent page to store all the pages...')
+    create_wiki_header_page(azure_devops_creds, project_name, wiki_id, wiki_base_folder, logger)
 
     ## Generate the page to store all the RELEASES SUMMARY pages
-    create_wiki_header_page(azure_devops_creds, project_name, wiki_id, wiki_base_path)
+    wiki_base_path = f'{wiki_base_folder}/{wiki_folder}'
+    create_wiki_header_page(azure_devops_creds, project_name, wiki_id, wiki_base_path, logger)
 
     with open(os.path.join(output, 'RELEASES_SUMMARY.md'), 'r') as file: 
         content = file.read()  
-        ## Store all the RELEASES SUMMARY pages and reset the latest page with the most updated content
-        create_or_update_wiki_page(azure_devops_creds, project_name, wiki_id, wiki_base_path, content)
-        create_or_update_wiki_page(azure_devops_creds, project_name, wiki_id, wiki_base_path, content, 'latest')
+        create_or_update_wiki_page(azure_devops_creds, project_name, wiki_id, wiki_base_path, content, logger)
 
 def generate_markdown(output: str, releases_infos: List, max_column: int):
     """Generate markdown releases summary file"""
@@ -147,4 +146,4 @@ def generate_summary(azure_devops_creds: AzureDevOpsCredentials, project_name: s
     
     generate_markdown(output, releases_summary, max_environment_per_release)
     if upload:
-        upload_wiki(azure_devops_creds, project_name, wiki_folder, output)
+        upload_wiki(azure_devops_creds, project_name, wiki_folder, output, logger)
