@@ -22,27 +22,33 @@ from src.models.release_summary import (
     ReleaseArtifactSummary
 )
 
-wiki_base_folder = 'Generated Release Summary'
+wiki_base_folder = 'Releases Summary (GENERATED)'
 releases_summary_file_name = 'RELEASES_SUMMARY.md'
 
 def generate_text_in_row(element: str, index: int, max_column: int) -> str:
     """Generate text in the identified column index in a table row"""
-    line = '|'
-    for x in range(max_column):
-        if x == index:
-            line += f'**{element}**'
-        else:
-            line += f' | '
-    line += '|\n'
-    return line
+    if max_column > 0:
+        line = '|'
+        for x in range(max_column):
+            if x == index:
+                line += f'**{element}**'
+            else:
+                line += f' | '
+        line += '|\n'
+        return line
+    else:
+        return ''
 
 def generate_separator_for_header(max_column: int) -> str:
     """Generate a sepator to define the header of the table in markdown"""
-    line = '|'
-    for x in range(max_column):
-        line += f' - |'
-    line += '\n'
-    return line
+    if max_column > 0:
+        line = '|'
+        for x in range(max_column):
+            line += f' - |'
+        line += '\n'
+        return line
+    else:
+        return ''
 
 def format_artifact(artifacts: List) -> str: 
     """Format the artifacts to put all of them in the same cell"""
@@ -86,7 +92,8 @@ def get_last_deployment_date_by_environment(release_environments: List, env_name
     
     return ''
 
-def upload_wiki(azure_devops_creds: AzureDevOpsCredentials, project_name: str, wiki_folder: str, output: str, logger: Logger):
+def upload_release_summary_to_wiki(azure_devops_creds: AzureDevOpsCredentials, project_name: str, wiki_folder: str, output: str, logger: Logger):
+    """Upload the release summary to the wiki"""
     wiki_id = init_wiki(azure_devops_creds, project_name, logger)
     logger.info(f'Generate the {wiki_base_folder} page to store all the pages...')
     create_wiki_container_page(azure_devops_creds, project_name, wiki_id, wiki_base_folder, logger)
@@ -129,14 +136,14 @@ def generate_summary(azure_devops_creds: AzureDevOpsCredentials, project_name: s
     releases_summary = []
     max_environment_per_release = 0
     for release_definition in release_definitions:
-         # Get the global informations for a release by definition
         release = get_release_by_definition(azure_devops_creds, project_name, release_definition.id)
+        logger.info(f'Get the global informations for release by definition: {release.name}')
         release_summary = ReleaseSummary(release.id, release.name)
         if  hasattr(release, 'environments'):
             for environment in release.environments:
                 if max_environment_per_release < len(release.environments):
                     max_environment_per_release = len(release.environments) + 1
-                # Get the detail informations for a release
+                logger.info('Get the detail informations for a release')
                 try:
                     if environment.currentRelease.id != 0:
                         release_summary.environments.append(create_environment_for_release_summary(azure_devops_creds, project_name, environment.name, environment.currentRelease.id))
@@ -146,4 +153,4 @@ def generate_summary(azure_devops_creds: AzureDevOpsCredentials, project_name: s
     
     generate_markdown(output, releases_summary, max_environment_per_release)
     if upload:
-        upload_wiki(azure_devops_creds, project_name, wiki_folder, output, logger)
+        upload_release_summary_to_wiki(azure_devops_creds, project_name, wiki_folder, output, logger)
