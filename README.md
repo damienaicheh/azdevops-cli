@@ -22,10 +22,16 @@ Create a dev environment for the project:
 python3 -m venv .venv
 ```
 
-Activate the dev environment:
+Activate the dev environment for Linux:
 
 ```sh
 source .venv/bin/activate
+```
+
+Activate the dev environment for Windows:
+
+```sh
+.\.venv\Scripts\activate
 ```
 
 Install python packages for the project:
